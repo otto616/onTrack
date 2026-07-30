@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
+:root {
+    --voltes-blue: #1A365D;
+    --bg-light: #F7FAFC;
+    --text-main: #2D3748;
+    --border-color: #E2E8F0;
+}
+
+body {
+    font-family: 'DM Sans', sans-serif !important;
+    background-color: var(--bg-light);
+    color: var(--text-main);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    color: var(--voltes-blue);
+}
+
+.card {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    background-color: #ffffff;
+}
+
+.table {
+    background-color: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table thead th {
+    background-color: var(--voltes-blue) !important;
+    color: #ffffff !important;
+    font-weight: 500;
+    border-bottom: none;
+    padding: 1rem;
+}
+
+.table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-color: var(--border-color);
+}
+
+.table-dark {
+    --bs-table-bg: var(--voltes-blue);
+}
+
+.btn {
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background-color: var(--voltes-blue);
+    border-color: var(--voltes-blue);
+}
+
+.btn-primary:hover {
+    background-color: #2A4365;
+    border-color: #2A4365;
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+    border-color: var(--border-color);
+    padding: 0.75rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--voltes-blue);
+    box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.1);
+}
+
+.badge {
+    padding: 0.5em 0.75em;
+    font-weight: 600;
+    border-radius: 6px;
+}
+
+.alert {
+    border-radius: 12px;
+    border: none;
+}
