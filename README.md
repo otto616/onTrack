@@ -1,7 +1,7 @@
 # OnTrack - Document Management System
 
 ## Overview
-OnTrack is a comprehensive web-based Document Management System originally developed as a prototype for **Grup Voltes**. It streamlines the process of tracking, verifying, and storing mandatory legal and safety documentation for different types of contractors, such as industrial subcontractors and freelancers.
+OnTrack is a comprehensive web-based Document Management System originally developed as a prototype. It streamlines the process of tracking, verifying, and storing mandatory legal and safety documentation for different types of contractors, such as industrial subcontractors and freelancers.
 
 ## Key Features
 *   **Dynamic Dashboard:** View global statistics (Total Clients, Pending Documents, Expired Documents) and real-time alerts for documents expiring within 30 days.
