@@ -15,7 +15,7 @@ OnTrack is a comprehensive web-based Document Management System originally devel
 *   **Backend:** Java 25, Spring Boot 4.1.0, Spring Data JPA
 *   **Frontend:** Thymeleaf, HTML5, CSS3, Bootstrap 5.3
 *   **Database:** H2 Database (In-Memory for rapid development and testing)
-*   **Typography & UI:** Google DM Sans font with a corporate Voltes-inspired color palette and layout.
+*   **Typography & UI:** Google DM Sans font with a corporate palette and layout.
 
 ## Prerequisites
 Ensure you have the following installed on your system:
@@ -24,6 +24,8 @@ Ensure you have the following installed on your system:
 *   An IDE like IntelliJ IDEA (highly recommended)
 
 ## How to Run Locally
+
+First of all, clone the repository
 
 ### Option 1: Using IntelliJ IDEA (Recommended)
 1. Open IntelliJ IDEA and select **Open**. Navigate to the `onTrack` project folder.
