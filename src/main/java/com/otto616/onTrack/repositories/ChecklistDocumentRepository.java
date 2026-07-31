@@ -11,7 +11,14 @@ import java.util.List;
 public interface ChecklistDocumentRepository extends JpaRepository<ChecklistDocument, Long> {
 
     List<ChecklistDocument> findByClientId(Long clientId);
+
     List<ChecklistDocument> findByExpirationDateLessThanEqual(LocalDate date);
+
     long countByReceivedFalse();
+
     long countByExpirationDateLessThan(LocalDate date);
+
+    long countByClientIdAndReceivedFalse(Long clientId);
+
+    long countByClientIdAndExpirationDateLessThan(Long clientId, LocalDate date);
 }

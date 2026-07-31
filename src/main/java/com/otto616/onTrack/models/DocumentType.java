@@ -12,12 +12,14 @@ public class DocumentType {
     private String name;
 
     @Enumerated(EnumType.STRING)
-    private Enums.ClientType clientType;
-
-    @Enumerated(EnumType.STRING)
     private Enums.DocumentCategory category;
 
+    @Enumerated(EnumType.STRING)
+    private Enums.ClientType clientType;
+
     private boolean expires;
+
+    private String verificationUrl;
 
     public DocumentType() {}
 
@@ -27,12 +29,15 @@ public class DocumentType {
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
-    public Enums.ClientType getClientType() { return clientType; }
-    public void setClientType(Enums.ClientType clientType) { this.clientType = clientType; }
-
     public Enums.DocumentCategory getCategory() { return category; }
     public void setCategory(Enums.DocumentCategory category) { this.category = category; }
 
+    public Enums.ClientType getClientType() { return clientType; }
+    public void setClientType(Enums.ClientType clientType) { this.clientType = clientType; }
+
     public boolean isExpires() { return expires; }
     public void setExpires(boolean expires) { this.expires = expires; }
+
+    public String getVerificationUrl() { return verificationUrl; }
+    public void setVerificationUrl(String verificationUrl) { this.verificationUrl = verificationUrl; }
 }

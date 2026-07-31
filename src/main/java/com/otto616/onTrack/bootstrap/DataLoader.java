@@ -52,6 +52,7 @@ public class DataLoader implements CommandLineRunner {
         doc.setCategory(category);
         doc.setClientType(clientType);
         doc.setExpires(expires);
+        doc.setVerificationUrl("");
         documentTypeRepository.save(doc);
     }
 

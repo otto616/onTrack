@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Gestor Documental - Grup Voltes</title>
+  <title>Checklist - Grup Voltes</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
@@ -10,20 +10,21 @@
   <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<div class="container mt-5 mb-5">
+<div class="container-fluid px-5 mt-5 mb-5">
   <a href="/" class="btn btn-outline-secondary mb-3">&larr; Tornar a l'inici</a>
 
   <h2 class="mb-1" th:text="${client.name}"></h2>
   <h5 class="text-muted mb-4" th:text="${client.clientType.description}"></h5>
 
   <form th:action="@{/client/{id}/checklist(id=${client.id})}" th:object="${form}" method="post">
-    <table class="table table-bordered table-hover align-middle">
-      <thead class="table-light">
+    <table class="table table-bordered table-hover align-middle shadow-sm">
+      <thead class="table-dark">
       <tr>
         <th>Categoria</th>
         <th>Document</th>
-        <th class="text-center">Arxiu</th>
-        <th class="text-center">Rebut (OK)</th>
+        <th class="text-center">Estat Validació</th>
+        <th class="text-center">PDF</th>
+        <th class="text-center">Rebut</th>
         <th>Data Caducitat</th>
       </tr>
       </thead>
@@ -33,13 +34,28 @@
 
         <input type="hidden" th:field="*{documents[__${stat.index}__].id}" />
 
-        <td th:text="${doc.documentType.category.description}"></td>
-        <td th:text="${doc.documentType.name}"></td>
+        <td th:text="${doc.documentType.category.description}" class="fw-bold text-secondary"></td>
+        <td>
+          <span th:text="${doc.documentType.name}"></span>
+          <br>
+          <a th:if="${doc.documentType.verificationUrl != null and !doc.documentType.verificationUrl.isEmpty()}"
+             th:href="${doc.documentType.verificationUrl}"
+             target="_blank" class="badge bg-primary text-decoration-none mt-1">
+            🔗 Link Oficial Verificació
+          </a>
+        </td>
 
         <td class="text-center">
-          <a th:if="${doc.fileName == null}" th:href="@{/document/{id}/upload(id=${doc.id})}" class="btn btn-sm btn-outline-primary">Pujar PDF</a>
+          <span th:if="${doc.status == 'OK'}" class="badge bg-success">✔️ Verificat</span>
+          <span th:if="${doc.status == 'PENDING'}" class="badge bg-secondary">Pendent</span>
+          <span th:if="${doc.status == 'EXPIRED'}" class="badge bg-danger">❌ Caducat</span>
+          <span th:if="${doc.status == 'EXPIRING_SOON'}" class="badge bg-warning text-dark">⚠️ Caduca Aviat</span>
+        </td>
+
+        <td class="text-center">
+          <a th:if="${doc.fileName == null}" th:href="@{/document/{id}/upload(id=${doc.id})}" class="btn btn-sm btn-outline-primary">+ Pujar PDF</a>
           <div th:if="${doc.fileName != null}">
-            <a th:href="@{/document/{id}/download(id=${doc.id})}" class="btn btn-sm btn-info text-white">Veure PDF</a>
+            <a th:href="@{/document/{id}/download(id=${doc.id})}" class="btn btn-sm btn-info text-white">Veure</a>
           </div>
         </td>
 
@@ -48,23 +64,19 @@
         </td>
 
         <td>
-          <input class="form-control form-control-sm" type="date"
-                 th:field="*{documents[__${stat.index}__].expirationDate}"
-                 th:disabled="${!doc.documentType.expires}" />
-
-          <div class="mt-1" th:if="${doc.status == 'EXPIRED'}">
-            <span class="badge bg-danger">Caducat!</span>
+          <div th:if="${doc.documentType.expires}">
+            <input class="form-control form-control-sm" type="date" th:field="*{documents[__${stat.index}__].expirationDate}" />
           </div>
-          <div class="mt-1" th:if="${doc.status == 'EXPIRING_SOON'}">
-            <span class="badge bg-warning text-dark">Caduca en < 30 dies</span>
+          <div th:unless="${doc.documentType.expires}" class="text-muted small">
+            No caduca
           </div>
         </td>
       </tr>
       </tbody>
     </table>
 
-    <div class="d-flex justify-content-end mt-3">
-      <button type="submit" class="btn btn-success">Guardar Canvis de Dates</button>
+    <div class="d-flex justify-content-end mt-4 position-sticky bottom-0 bg-white p-3 border-top shadow">
+      <button type="submit" class="btn btn-success btn-lg">💾 Guardar Tots els Canvis</button>
     </div>
   </form>
 </div>

@@ -1,6 +1,7 @@
 package com.otto616.onTrack.models;
 
 import jakarta.persistence.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 
 @Entity
@@ -20,6 +21,7 @@ public class ChecklistDocument {
 
     private boolean received = false;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate expirationDate;
 
     private String fileName;

@@ -23,7 +23,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class ClientController {
@@ -56,12 +58,22 @@ public class ClientController {
             clients = clientRepository.findAll();
         }
 
+        Map<Long, Long> pendingMap = new HashMap<>();
+        Map<Long, Long> expiredMap = new HashMap<>();
+
+        for (Client c : clients) {
+            pendingMap.put(c.getId(), checklistRepository.countByClientIdAndReceivedFalse(c.getId()));
+            expiredMap.put(c.getId(), checklistRepository.countByClientIdAndExpirationDateLessThan(c.getId(), today));
+        }
+
         model.addAttribute("clients", clients);
         model.addAttribute("alerts", alerts);
         model.addAttribute("totalClients", totalClients);
         model.addAttribute("pendingDocs", pendingDocs);
         model.addAttribute("expiredDocs", expiredDocs);
         model.addAttribute("searchQuery", search);
+        model.addAttribute("pendingMap", pendingMap);
+        model.addAttribute("expiredMap", expiredMap);
 
         return "index";
     }
@@ -83,10 +95,11 @@ public class ClientController {
     public String viewChecklist(@PathVariable Long id, Model model) {
         Client client = clientRepository.findById(id).orElseThrow();
         List<ChecklistDocument> checklist = checklistRepository.findByClientId(id);
+        List<DocumentType> requiredDocs = documentTypeRepository.findByClientType(client.getClientType());
 
-        if (checklist.isEmpty()) {
-            List<DocumentType> requiredDocs = documentTypeRepository.findByClientType(client.getClientType());
-            for (DocumentType docType : requiredDocs) {
+        for (DocumentType docType : requiredDocs) {
+            boolean exists = checklist.stream().anyMatch(c -> c.getDocumentType().getId().equals(docType.getId()));
+            if (!exists) {
                 ChecklistDocument chk = new ChecklistDocument();
                 chk.setClient(client);
                 chk.setDocumentType(docType);
