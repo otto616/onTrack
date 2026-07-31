@@ -1,33 +1,108 @@
-<div class="card-body">
-  <form th:action="@{/catalog/new}" th:object="${newDocument}" method="post" class="row g-3">
-    <div class="col-md-3">
-      <label class="form-label">Nom del Document</label>
-      <input type="text" class="form-control" th:field="*{name}" required>
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Catàleg · Gestor Documental — Grup Voltes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="appbar">
+  <div class="appbar__inner">
+    <a class="brand" th:href="@{/}">
+      <span class="brand__mark">GV</span>
+      <span class="brand__text">
+        <strong>Grup Voltes</strong>
+        <span>Gestor documental</span>
+      </span>
+    </a>
+    <nav class="appnav">
+      <a th:href="@{/}" class="appnav__link">Clients</a>
+      <a th:href="@{/catalog}" class="appnav__link is-active">Catàleg</a>
+    </nav>
+  </div>
+</header>
+
+<main class="shell">
+
+  <a th:href="@{/}" class="backlink">&larr; Tots els clients</a>
+
+  <div class="pagehead">
+    <div>
+      <span class="eyebrow">Configuració</span>
+      <h1 class="pagehead__title">Catàleg de documents</h1>
+      <p class="pagehead__sub">Defineix quins documents s'exigeixen i a quina tipologia de client.</p>
     </div>
-    <div class="col-md-2">
-      <label class="form-label">Categoria</label>
-      <select class="form-select" th:field="*{category}" required>
-        <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat.description}"></option>
-      </select>
-    </div>
-    <div class="col-md-3">
-      <label class="form-label">Tipologia</label>
-      <select class="form-select" th:field="*{clientType}" required>
-        <option th:each="type : ${clientTypes}" th:value="${type}" th:text="${type.description}"></option>
-      </select>
-    </div>
-    <div class="col-md-3">
-      <label class="form-label">URL Oficial (Opcional)</label>
-      <input type="url" class="form-control" th:field="*{verificationUrl}" placeholder="https://...">
-    </div>
-    <div class="col-md-1 d-flex align-items-end">
-      <div class="form-check mb-2">
-        <input class="form-check-input ms-1" type="checkbox" th:field="*{expires}" id="expiresCheck">
-        <label class="form-check-label ms-1 text-nowrap" for="expiresCheck">Caduca?</label>
+  </div>
+
+  <div class="panel" style="margin-bottom:28px;">
+    <div class="panel__head">
+      <div>
+        <span class="eyebrow">Alta</span>
+        <div class="panel__title">Afegeix un document al catàleg</div>
       </div>
+      <span class="panel__note">S'aplicarà als clients de la tipologia escollida</span>
     </div>
-    <div class="col-12 text-end mt-4">
-      <button type="submit" class="btn btn-success">Afegir al Catàleg</button>
-    </div>
-  </form>
-</div>
+
+    <form th:action="@{/catalog/new}" th:object="${newDocument}" method="post" class="panel__body">
+      <div class="formgrid">
+
+        <div class="col-4">
+          <label class="field__label" for="docName">Nom del document</label>
+          <input type="text" id="docName" class="form-control" th:field="*{name}"
+                 placeholder="Ex.: Certificat de la Seguretat Social" required>
+        </div>
+
+        <div class="col-3">
+          <label class="field__label" for="docCategory">Categoria</label>
+          <select id="docCategory" class="form-select" th:field="*{category}" required>
+            <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat.description}"></option>
+          </select>
+        </div>
+
+        <div class="col-3">
+          <label class="field__label" for="docClientType">Tipologia de client</label>
+          <select id="docClientType" class="form-select" th:field="*{clientType}" required>
+            <option th:each="type : ${clientTypes}" th:value="${type}" th:text="${type.description}"></option>
+          </select>
+        </div>
+
+        <div class="col-4">
+          <label class="field__label" for="docUrl">URL de verificació</label>
+          <input type="url" id="docUrl" class="form-control" th:field="*{verificationUrl}"
+                 placeholder="https://…">
+          <p class="field__hint">Opcional. Enllaç oficial per comprovar el document.</p>
+        </div>
+
+        <div class="col-4" style="display:flex; align-items:center; padding-top:22px;">
+          <label class="check-inline" for="expiresCheck">
+            <input class="form-check-input" type="checkbox" th:field="*{expires}" id="expiresCheck">
+            Aquest document caduca
+          </label>
+        </div>
+
+        <div class="col-12">
+          <div class="form-actions">
+            <button type="submit" class="btn btn--ink">Afegeix al catàleg</button>
+          </div>
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+</main>
+
+<footer class="sitefoot">
+  <div class="sitefoot__inner">
+    <span>Grup Voltes · Gestor documental intern</span>
+  </div>
+</footer>
+
+</body>
+</html>

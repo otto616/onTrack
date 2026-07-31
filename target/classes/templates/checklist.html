@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ca" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Checklist - Grup Voltes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Expedient · Gestor Documental — Grup Voltes</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
@@ -10,75 +11,128 @@
   <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<div class="container-fluid px-5 mt-5 mb-5">
-  <a href="/" class="btn btn-outline-secondary mb-3">&larr; Tornar a l'inici</a>
 
-  <h2 class="mb-1" th:text="${client.name}"></h2>
-  <h5 class="text-muted mb-4" th:text="${client.clientType.description}"></h5>
+<header class="appbar">
+  <div class="appbar__inner">
+    <a class="brand" th:href="@{/}">
+      <span class="brand__mark">GV</span>
+      <span class="brand__text">
+        <strong>Grup Voltes</strong>
+        <span>Gestor documental</span>
+      </span>
+    </a>
+    <nav class="appnav">
+      <a th:href="@{/}" class="appnav__link is-active">Clients</a>
+      <a th:href="@{/catalog}" class="appnav__link">Catàleg</a>
+    </nav>
+  </div>
+</header>
+
+<main class="shell">
+
+  <a th:href="@{/}" class="backlink">&larr; Tots els clients</a>
+
+  <div class="pagehead">
+    <div>
+      <span class="eyebrow">Expedient del client</span>
+      <h1 class="pagehead__title" th:text="${client.name}">Nom del client</h1>
+      <p class="pagehead__sub" th:text="${client.clientType.description}">Tipologia</p>
+    </div>
+    <div class="pagehead__actions">
+      <span class="pill pill--neutral pill--plain">Ref. <span th:text="${client.id}">0</span></span>
+    </div>
+  </div>
 
   <form th:action="@{/client/{id}/checklist(id=${client.id})}" th:object="${form}" method="post">
-    <table class="table table-bordered table-hover align-middle shadow-sm">
-      <thead class="table-dark">
-      <tr>
-        <th>Categoria</th>
-        <th>Document</th>
-        <th class="text-center">Estat Validació</th>
-        <th class="text-center">PDF</th>
-        <th class="text-center">Rebut</th>
-        <th>Data Caducitat</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr th:each="doc, stat : *{documents}"
-          th:classappend="${doc.status == 'EXPIRED' ? 'table-danger' : (doc.status == 'EXPIRING_SOON' ? 'table-warning' : '')}">
 
-        <input type="hidden" th:field="*{documents[__${stat.index}__].id}" />
+    <div class="table-wrap">
+      <div class="panel__head">
+        <div>
+          <span class="eyebrow">Documentació requerida</span>
+          <div class="panel__title">Marca el que has rebut i anota les caducitats</div>
+        </div>
+        <span class="panel__note">Els canvis no es desen fins que ho confirmis a baix</span>
+      </div>
 
-        <td th:text="${doc.documentType.category.description}" class="fw-bold text-secondary"></td>
-        <td>
-          <span th:text="${doc.documentType.name}"></span>
-          <br>
-          <a th:if="${doc.documentType.verificationUrl != null and !doc.documentType.verificationUrl.isEmpty()}"
-             th:href="${doc.documentType.verificationUrl}"
-             target="_blank" class="badge bg-primary text-decoration-none mt-1">
-            🔗 Link Oficial Verificació
-          </a>
-        </td>
+      <div class="table-scroll">
+        <table class="table-x">
+          <thead>
+          <tr>
+            <th style="width:150px">Categoria</th>
+            <th>Document</th>
+            <th class="t-center" style="width:150px">Validació</th>
+            <th class="t-center" style="width:130px">Arxiu</th>
+            <th class="t-center" style="width:90px">Rebut</th>
+            <th style="width:190px">Caducitat</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="doc, stat : *{documents}" class="row-spine"
+              th:classappend="${doc.status == 'EXPIRED' ? 'row--expired' : (doc.status == 'EXPIRING_SOON' ? 'row--warn' : (doc.status == 'OK' ? 'row--ok' : ''))}">
 
-        <td class="text-center">
-          <span th:if="${doc.status == 'OK'}" class="badge bg-success">✔️ Verificat</span>
-          <span th:if="${doc.status == 'PENDING'}" class="badge bg-secondary">Pendent</span>
-          <span th:if="${doc.status == 'EXPIRED'}" class="badge bg-danger">❌ Caducat</span>
-          <span th:if="${doc.status == 'EXPIRING_SOON'}" class="badge bg-warning text-dark">⚠️ Caduca Aviat</span>
-        </td>
+            <input type="hidden" th:field="*{documents[__${stat.index}__].id}" />
 
-        <td class="text-center">
-          <a th:if="${doc.fileName == null}" th:href="@{/document/{id}/upload(id=${doc.id})}" class="btn btn-sm btn-outline-primary">+ Pujar PDF</a>
-          <div th:if="${doc.fileName != null}">
-            <a th:href="@{/document/{id}/download(id=${doc.id})}" class="btn btn-sm btn-info text-white">Veure</a>
-          </div>
-        </td>
+            <td class="rowgroup" th:text="${doc.documentType.category.description}">Categoria</td>
 
-        <td class="text-center">
-          <input class="form-check-input" type="checkbox" th:field="*{documents[__${stat.index}__].received}" />
-        </td>
+            <td>
+              <span class="cell-name" th:text="${doc.documentType.name}">Document</span>
+              <a th:if="${doc.documentType.verificationUrl != null and !doc.documentType.verificationUrl.isEmpty()}"
+                 th:href="${doc.documentType.verificationUrl}"
+                 target="_blank" rel="noopener" class="tag">
+                Verificació oficial &nearr;
+              </a>
+            </td>
 
-        <td>
-          <div th:if="${doc.documentType.expires}">
-            <input class="form-control form-control-sm" type="date" th:field="*{documents[__${stat.index}__].expirationDate}" />
-          </div>
-          <div th:unless="${doc.documentType.expires}" class="text-muted small">
-            No caduca
-          </div>
-        </td>
-      </tr>
-      </tbody>
-    </table>
+            <td class="t-center">
+              <span th:if="${doc.status == 'OK'}" class="pill pill--ok">Verificat</span>
+              <span th:if="${doc.status == 'PENDING'}" class="pill pill--neutral">Pendent</span>
+              <span th:if="${doc.status == 'EXPIRED'}" class="pill pill--danger">Caducat</span>
+              <span th:if="${doc.status == 'EXPIRING_SOON'}" class="pill pill--warn">Caduca aviat</span>
+            </td>
 
-    <div class="d-flex justify-content-end mt-4 position-sticky bottom-0 bg-white p-3 border-top shadow">
-      <button type="submit" class="btn btn-success btn-lg">💾 Guardar Tots els Canvis</button>
+            <td class="t-center">
+              <a th:if="${doc.fileName == null}" th:href="@{/document/{id}/upload(id=${doc.id})}"
+                 class="btn btn--line btn--sm">+ Puja arxiu</a>
+              <a th:if="${doc.fileName != null}" th:href="@{/document/{id}/download(id=${doc.id})}"
+                 class="btn btn--cobalt btn--sm">Obre arxiu</a>
+            </td>
+
+            <td class="t-center">
+              <input class="form-check-input" type="checkbox"
+                     th:field="*{documents[__${stat.index}__].received}" />
+            </td>
+
+            <td>
+              <input th:if="${doc.documentType.expires}"
+                     class="form-control form-control-sm" type="date"
+                     th:field="*{documents[__${stat.index}__].expirationDate}" />
+              <span th:unless="${doc.documentType.expires}" class="cell-sub">Sense caducitat</span>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
+
+    <div class="savebar">
+      <span class="savebar__note">Tens canvis sense desar en aquest expedient.</span>
+      <div style="display:flex; gap:10px;">
+        <a th:href="@{/}" class="btn btn--quiet">Descarta</a>
+        <button type="submit" class="btn btn--ink btn--lg">Desa els canvis</button>
+      </div>
+    </div>
+
   </form>
-</div>
+
+</main>
+
+<footer class="sitefoot">
+  <div class="sitefoot__inner">
+    <span>Grup Voltes · Gestor documental intern</span>
+    <span>Les caducitats es revisen diàriament</span>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

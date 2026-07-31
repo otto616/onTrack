@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ca" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Gestor Documental - Grup Voltes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Puja arxiu · Gestor Documental — Grup Voltes</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
@@ -10,21 +11,68 @@
   <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<div class="container mt-5">
-  <h3 th:text="'Pujar arxiu per a: ' + ${document.documentType.name}"></h3>
-  <h5 class="text-muted mb-4" th:text="${document.client.name}"></h5>
 
-  <form th:action="@{/document/{id}/upload(id=${document.id})}" method="post" enctype="multipart/form-data" class="w-50 border p-4 rounded shadow-sm bg-light">
-    <div class="mb-3">
-      <label class="form-label fw-bold">Selecciona el PDF o Imatge</label>
-      <input type="file" name="file" class="form-control" accept=".pdf,.png,.jpg,.jpeg" required>
+<header class="appbar">
+  <div class="appbar__inner">
+    <a class="brand" th:href="@{/}">
+      <span class="brand__mark">GV</span>
+      <span class="brand__text">
+        <strong>Grup Voltes</strong>
+        <span>Gestor documental</span>
+      </span>
+    </a>
+    <nav class="appnav">
+      <a th:href="@{/}" class="appnav__link is-active">Clients</a>
+      <a th:href="@{/catalog}" class="appnav__link">Catàleg</a>
+    </nav>
+  </div>
+</header>
+
+<main class="shell shell--narrow">
+
+  <a th:href="@{/client/{id}/checklist(id=${document.client.id})}" class="backlink">
+    &larr; Torna a l'expedient
+  </a>
+
+  <div class="pagehead">
+    <div>
+      <span class="eyebrow" th:text="${document.client.name}">Client</span>
+      <h1 class="pagehead__title" th:text="${document.documentType.name}">Document</h1>
+      <p class="pagehead__sub">Adjunta el justificant per deixar constància d'aquest document.</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel__head">
+      <div class="panel__title">Arxiu del document</div>
+      <span class="panel__note">PDF, PNG o JPG</span>
     </div>
 
-    <div class="d-flex justify-content-between mt-4">
-      <a th:href="@{/client/{id}/checklist(id=${document.client.id})}" class="btn btn-secondary">Cancel·lar</a>
-      <button type="submit" class="btn btn-primary">Guardar Arxiu</button>
-    </div>
-  </form>
-</div>
+    <form th:action="@{/document/{id}/upload(id=${document.id})}" method="post"
+          enctype="multipart/form-data" class="panel__body">
+
+      <div class="field">
+        <label class="field__label" for="docFile">Selecciona l'arxiu</label>
+        <input type="file" id="docFile" name="file" class="form-control"
+               accept=".pdf,.png,.jpg,.jpeg" required>
+        <p class="field__hint">Substituirà qualsevol arxiu desat anteriorment per a aquest document.</p>
+      </div>
+
+      <div class="form-actions">
+        <a th:href="@{/client/{id}/checklist(id=${document.client.id})}" class="btn btn--quiet">Cancel·la</a>
+        <button type="submit" class="btn btn--ink">Desa l'arxiu</button>
+      </div>
+
+    </form>
+  </div>
+
+</main>
+
+<footer class="sitefoot">
+  <div class="sitefoot__inner">
+    <span>Grup Voltes · Gestor documental intern</span>
+  </div>
+</footer>
+
 </body>
 </html>

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ca" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Gestor Documental - Grup Voltes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Clients · Gestor Documental — Grup Voltes</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
@@ -10,106 +11,156 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<div class="container mt-5">
 
-    <div th:if="${not #lists.isEmpty(alerts)}" class="accordion shadow-sm mb-4" id="alertAccordion">
-        <div class="accordion-item border-warning">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed bg-warning text-dark fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAlerts" aria-expanded="false" aria-controls="collapseAlerts">
-                    🔔 Hi ha documents caducats o a punt de caducar (Clic per obrir)
-                </button>
-            </h2>
-            <div id="collapseAlerts" class="accordion-collapse collapse" data-bs-parent="#alertAccordion">
-                <div class="accordion-body bg-light">
-                    <ul class="mb-0">
-                        <li th:each="alert : ${alerts}" class="mb-1">
-                            <strong th:text="${alert.client.name}"></strong> -
-                            <span th:text="${alert.documentType.name}"></span>
-                            (Data: <span th:text="${alert.expirationDate}"></span>)
-                            <span th:if="${alert.status == 'EXPIRED'}" class="badge bg-danger ms-2">Caducat</span>
-                            <span th:if="${alert.status == 'EXPIRING_SOON'}" class="badge bg-warning text-dark ms-2">Caduca Aviat</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+<header class="appbar">
+    <div class="appbar__inner">
+        <a class="brand" th:href="@{/}">
+            <span class="brand__mark">GV</span>
+            <span class="brand__text">
+                <strong>Grup Voltes</strong>
+                <span>Gestor documental</span>
+            </span>
+        </a>
+        <nav class="appnav">
+            <a th:href="@{/}" class="appnav__link is-active">Clients</a>
+            <a th:href="@{/catalog}" class="appnav__link">Catàleg</a>
+        </nav>
+        <a th:href="@{/client/new}" class="btn btn--line btn--sm">+ Nou client</a>
+    </div>
+</header>
+
+<main class="shell">
+
+    <div class="pagehead">
+        <div>
+            <span class="eyebrow">Panell de control</span>
+            <h1 class="pagehead__title">Estat de la documentació</h1>
+            <p class="pagehead__sub">Tots els clients actius i el seu compliment documental.</p>
         </div>
     </div>
 
-    <div class="row mb-5">
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 bg-primary text-white h-100">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <h5 class="card-title">Total Clients</h5>
-                    <h2 class="display-4 fw-bold mb-0" th:text="${totalClients}">0</h2>
-                </div>
-            </div>
+    <section th:if="${not #lists.isEmpty(alerts)}" class="notice">
+        <button class="notice__toggle collapsed" type="button"
+                data-bs-toggle="collapse" data-bs-target="#alertsPanel"
+                aria-expanded="false" aria-controls="alertsPanel">
+            Hi ha documents caducats o a punt de caducar
+            <span class="notice__count" th:text="${#lists.size(alerts)} + ' avisos'">0 avisos</span>
+        </button>
+        <div id="alertsPanel" class="collapse">
+            <ul class="notice__list">
+                <li class="notice__item" th:each="alert : ${alerts}">
+                    <span class="notice__client" th:text="${alert.client.name}">Client</span>
+                    <span class="notice__doc" th:text="${alert.documentType.name}">Document</span>
+                    <span th:if="${alert.status == 'EXPIRED'}" class="pill pill--danger">Caducat</span>
+                    <span th:if="${alert.status == 'EXPIRING_SOON'}" class="pill pill--warn">Caduca aviat</span>
+                    <span class="notice__date" th:text="${alert.expirationDate}">--</span>
+                </li>
+            </ul>
         </div>
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 bg-warning text-dark h-100">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <h5 class="card-title">Documents Pendents Globals</h5>
-                    <h2 class="display-4 fw-bold mb-0" th:text="${pendingDocs}">0</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 bg-danger text-white h-100">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <h5 class="card-title">Documents Caducats Globals</h5>
-                    <h2 class="display-4 fw-bold mb-0" th:text="${expiredDocs}">0</h2>
-                </div>
-            </div>
-        </div>
-    </div>
+    </section>
 
-    <div class="d-flex justify-content-between align-items-center mb-4 mt-5">
-        <h2>Llistat de Clients</h2>
-        <div class="d-flex w-50 justify-content-end">
-            <form th:action="@{/}" method="get" class="input-group me-3 w-75">
-                <input type="text" class="form-control" name="search" placeholder="Cercar per nom o CIF..." th:value="${searchQuery}">
-                <button class="btn btn-outline-secondary" type="submit">🔍 Cercar</button>
-                <a th:if="${searchQuery != null and !searchQuery.isEmpty()}" th:href="@{/}" class="btn btn-outline-danger">✖</a>
+    <section class="stats">
+        <div class="stat stat--total">
+            <span class="eyebrow">Clients</span>
+            <div class="stat__value" th:text="${totalClients}">0</div>
+            <div class="stat__note">Empreses donades d'alta</div>
+        </div>
+        <div class="stat stat--pending">
+            <span class="eyebrow">Pendents de rebre</span>
+            <div class="stat__value" th:text="${pendingDocs}">0</div>
+            <div class="stat__note">Documents que encara no han arribat</div>
+        </div>
+        <div class="stat stat--expired">
+            <span class="eyebrow">Caducats</span>
+            <div class="stat__value" th:text="${expiredDocs}">0</div>
+            <div class="stat__note">Requereixen renovació immediata</div>
+        </div>
+    </section>
+
+    <div class="pagehead">
+        <div>
+            <span class="eyebrow">Directori</span>
+            <h2 class="pagehead__title">Clients</h2>
+        </div>
+        <div class="pagehead__actions">
+            <form th:action="@{/}" method="get" class="search">
+                <input type="text" class="form-control" name="search"
+                       placeholder="Cerca per nom o CIF" th:value="${searchQuery}">
+                <button class="btn btn--line" type="submit">Cerca</button>
+                <a th:if="${searchQuery != null and !searchQuery.isEmpty()}" th:href="@{/}"
+                   class="btn btn--quiet search__clear">Neteja</a>
             </form>
-            <a th:href="@{/catalog}" class="btn btn-outline-primary me-2 text-nowrap">⚙️ Catàleg</a>
-            <a th:href="@{/client/new}" class="btn btn-success text-nowrap">+ Nou Client</a>
+            <a th:href="@{/catalog}" class="btn btn--line">Catàleg de documents</a>
+            <a th:href="@{/client/new}" class="btn btn--ink">+ Nou client</a>
         </div>
     </div>
 
-    <table class="table table-striped table-hover table-bordered align-middle shadow-sm">
-        <thead class="table-dark">
-        <tr>
-            <th>ID</th>
-            <th>Empresa</th>
-            <th>NIF / CIF</th>
-            <th>Tipologia</th>
-            <th class="text-center">Estat Documents</th>
-            <th>Accions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="client : ${clients}">
-            <td th:text="${client.id}"></td>
-            <td th:text="${client.name}" class="fw-bold"></td>
-            <td th:text="${client.taxId}"></td>
-            <td th:text="${client.clientType.description}"></td>
-            <td class="text-center">
-                        <span class="badge bg-warning text-dark me-1" title="Pendents d'entregar">
-                            <span th:text="${pendingMap.get(client.id)}"></span> Pen.
+    <div class="table-wrap">
+        <div class="table-scroll">
+            <table class="table-x">
+                <thead>
+                <tr>
+                    <th style="width:74px">Ref.</th>
+                    <th>Empresa</th>
+                    <th>NIF / CIF</th>
+                    <th>Tipologia</th>
+                    <th class="t-center">Estat</th>
+                    <th class="t-right">Accions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="client : ${clients}" class="row-spine"
+                    th:classappend="${expiredMap.get(client.id) > 0 ? 'row--expired' : (pendingMap.get(client.id) > 0 ? '' : 'row--ok')}">
+
+                    <td class="cell-id" th:text="${client.id}">0</td>
+                    <td class="cell-name" th:text="${client.name}">Empresa</td>
+                    <td class="cell-mono" th:text="${client.taxId}">—</td>
+                    <td th:text="${client.clientType.description}">—</td>
+
+                    <td class="t-center">
+                        <span class="counter">
+                            <span th:if="${pendingMap.get(client.id) == 0 and expiredMap.get(client.id) == 0}"
+                                  class="pill pill--ok">Tot en ordre</span>
+                            <span th:if="${pendingMap.get(client.id) > 0}" class="pill pill--warn"
+                                  title="Documents pendents de rebre">
+                                <span th:text="${pendingMap.get(client.id)}">0</span> pendents
+                            </span>
+                            <span th:if="${expiredMap.get(client.id) > 0}" class="pill pill--danger"
+                                  title="Documents caducats">
+                                <span th:text="${expiredMap.get(client.id)}">0</span> caducats
+                            </span>
                         </span>
-                <span class="badge bg-danger" title="Caducats">
-                            <span th:text="${expiredMap.get(client.id)}"></span> Cad.
-                        </span>
-                <span th:if="${pendingMap.get(client.id) == 0 and expiredMap.get(client.id) == 0}" class="badge bg-success ms-1">
-                            Tot OK
-                        </span>
-            </td>
-            <td>
-                <a th:href="@{/client/{id}/checklist(id=${client.id})}" class="btn btn-sm btn-primary">Veure Checklist</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+                    </td>
+
+                    <td class="t-right">
+                        <a th:href="@{/client/{id}/checklist(id=${client.id})}" class="btn btn--line btn--sm">
+                            Obre l'expedient
+                        </a>
+                    </td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(clients)}">
+                    <td colspan="6">
+                        <div class="empty">
+                            <p class="empty__title">Cap client per mostrar</p>
+                            <p class="empty__text">Ajusta la cerca o dona d'alta la primera empresa.</p>
+                            <a th:href="@{/client/new}" class="btn btn--ink">+ Nou client</a>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</main>
+
+<footer class="sitefoot">
+    <div class="sitefoot__inner">
+        <span>Grup Voltes · Gestor documental intern</span>
+        <span>Els estats es recalculen a cada càrrega</span>
+    </div>
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

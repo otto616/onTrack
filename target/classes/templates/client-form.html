@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ca" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Gestor Documental - Grup Voltes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nou client · Gestor Documental — Grup Voltes</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
@@ -10,34 +11,82 @@
   <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<div class="container mt-5">
-  <a href="/" class="btn btn-outline-secondary mb-3">&larr; Tornar a l'inici</a>
 
-  <h2 class="mb-4">Afegir Nou Client</h2>
+<header class="appbar">
+  <div class="appbar__inner">
+    <a class="brand" th:href="@{/}">
+      <span class="brand__mark">GV</span>
+      <span class="brand__text">
+        <strong>Grup Voltes</strong>
+        <span>Gestor documental</span>
+      </span>
+    </a>
+    <nav class="appnav">
+      <a th:href="@{/}" class="appnav__link is-active">Clients</a>
+      <a th:href="@{/catalog}" class="appnav__link">Catàleg</a>
+    </nav>
+  </div>
+</header>
 
-  <form th:action="@{/client/new}" th:object="${client}" method="post" class="w-50">
-    <div class="mb-3">
-      <label class="form-label">Nom de l'Empresa</label>
-      <input type="text" class="form-control" th:field="*{name}" required />
+<main class="shell shell--narrow">
+
+  <a th:href="@{/}" class="backlink">&larr; Tots els clients</a>
+
+  <div class="pagehead">
+    <div>
+      <span class="eyebrow">Alta</span>
+      <h1 class="pagehead__title">Nou client</h1>
+      <p class="pagehead__sub">En crear-lo, s'hi assignarà la documentació que li correspon segons la tipologia.</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel__head">
+      <div class="panel__title">Dades de l'empresa</div>
+      <span class="panel__note">Tots els camps són obligatoris</span>
     </div>
 
-    <div class="mb-3">
-      <label class="form-label">NIF / CIF</label>
-      <input type="text" class="form-control" th:field="*{taxId}" required />
-    </div>
+    <form th:action="@{/client/new}" th:object="${client}" method="post" class="panel__body">
 
-    <div class="mb-3">
-      <label class="form-label">Tipologia</label>
-      <select class="form-select" th:field="*{clientType}" required>
-        <option value="" disabled selected>Selecciona un tipus...</option>
-        <option th:each="type : ${clientTypes}"
-                th:value="${type}"
-                th:text="${type.description}"></option>
-      </select>
-    </div>
+      <div class="field">
+        <label class="field__label" for="clientName">Nom de l'empresa</label>
+        <input type="text" id="clientName" class="form-control" th:field="*{name}"
+               placeholder="Raó social completa" required />
+      </div>
 
-    <button type="submit" class="btn btn-primary">Crear Client</button>
-  </form>
-</div>
+      <div class="field">
+        <label class="field__label" for="clientTaxId">NIF / CIF</label>
+        <input type="text" id="clientTaxId" class="form-control" th:field="*{taxId}"
+               placeholder="B12345678" required />
+        <p class="field__hint">S'utilitza per cercar el client des del directori.</p>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="clientType">Tipologia</label>
+        <select id="clientType" class="form-select" th:field="*{clientType}" required>
+          <option value="" disabled selected>Selecciona una tipologia</option>
+          <option th:each="type : ${clientTypes}"
+                  th:value="${type}"
+                  th:text="${type.description}"></option>
+        </select>
+        <p class="field__hint">Determina quins documents li seran exigits.</p>
+      </div>
+
+      <div class="form-actions">
+        <a th:href="@{/}" class="btn btn--quiet">Cancel·la</a>
+        <button type="submit" class="btn btn--ink">Crea el client</button>
+      </div>
+
+    </form>
+  </div>
+
+</main>
+
+<footer class="sitefoot">
+  <div class="sitefoot__inner">
+    <span>Grup Voltes · Gestor documental intern</span>
+  </div>
+</footer>
+
 </body>
 </html>
