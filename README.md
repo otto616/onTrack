@@ -1,7 +1,7 @@
 # OnTrack - Document Management System
 
 <div align="center">
-  <img src="assets/logo.png" alt="Logotip OnTrack" width="200">
+  <img src="logo.png" alt="Logo OnTrack" width="200">
 </div>
 <br>
 
