@@ -3,6 +3,16 @@
 ## Overview
 OnTrack is a comprehensive web-based Document Management System originally developed as a prototype. It streamlines the process of tracking, verifying, and storing mandatory legal and safety documentation for different types of contractors, such as industrial subcontractors and freelancers.
 
+## Prototype Disclaimer & Future Roadmap
+This project is currently a **functional prototype** designed to demonstrate the core workflows, data models, and user interface of the Document Management System. 
+
+To transition this prototype into a production-ready web application, the following architectural upgrades are required:
+
+* **Database Persistence:** Replace the current temporary In-Memory H2 database with a robust relational database (e.g., PostgreSQL, MySQL, or SQL Server) to ensure permanent data storage across server restarts.
+* **File Storage Integration:** Migrate the local file upload system to a dedicated cloud storage solution (e.g., AWS S3, Google Cloud Storage) or a secure corporate file server for scalable and reliable document handling.
+* **Authentication & Authorization:** Implement a security layer (e.g., Spring Security, OAuth2, or Active Directory) to manage secure logins, user roles, and generate an automated audit log (tracking who uploads or verifies which document).
+* **Production Deployment:** Containerize the application (e.g., using Docker) and deploy it to a production server environment with proper SSL/TLS certificates (HTTPS) for secure data transmission.
+
 ## Key Features
 *   **Dynamic Dashboard:** View global statistics (Total Clients, Pending Documents, Expired Documents) and real-time alerts for documents expiring within 30 days.
 *   **Client Management:** Register and manage clients based on their specific typology (e.g., Subcontractor, Freelance with/without workers).
