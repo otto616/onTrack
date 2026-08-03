@@ -1,5 +1,10 @@
 # OnTrack - Document Management System
 
+<div align="center">
+  <img src="assets/logo.png" alt="Logotip OnTrack" width="200">
+</div>
+<br>
+
 ## Overview
 OnTrack is a comprehensive web-based Document Management System originally developed as a prototype. It streamlines the process of tracking, verifying, and storing mandatory legal and safety documentation for different types of contractors, such as industrial subcontractors and freelancers.
 
