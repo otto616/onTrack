@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ClientRepository extends JpaRepository<Provider, Long> {
+public interface ProviderRepository extends JpaRepository<Provider, Long> {
     List<Provider> findByNameContainingIgnoreCaseOrTaxIdContainingIgnoreCase(String name, String taxId);
 }

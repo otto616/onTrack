@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Clients · Gestor Documental</title>
+    <title>Proveïdors · Gestor Documental</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
@@ -17,8 +17,8 @@
         <a class="brand" th:href="@{/}">
             <span class="brand__mark">GV</span>
             <span class="brand__text">
-                <strong></strong>
-                <span>Gestor documental</span>
+                <strong>Gestor</strong>
+                <span>Documental</span>
             </span>
         </a>
         <nav class="appnav">
@@ -49,7 +49,7 @@
         <div id="alertsPanel" class="collapse">
             <ul class="notice__list">
                 <li class="notice__item" th:each="alert : ${alerts}">
-                    <span class="notice__client" th:text="${alert.provider.name}">Client</span>
+                    <span class="notice__client" th:text="${alert.provider.name}">Empresa</span>
                     <span class="notice__doc" th:text="${alert.documentType.name}">Document</span>
                     <span th:if="${alert.status == 'EXPIRED'}" class="pill pill--danger">Caducat</span>
                     <span th:if="${alert.status == 'EXPIRING_SOON'}" class="pill pill--warn">Caduca aviat</span>
@@ -62,7 +62,7 @@
     <section class="stats">
         <div class="stat stat--total">
             <span class="eyebrow">Proveïdors</span>
-            <div class="stat__value" th:text="${totalClients}">0</div>
+            <div class="stat__value" th:text="${totalProviders}">0</div>
             <div class="stat__note">Empreses donades d'alta</div>
         </div>
         <div class="stat stat--pending">
@@ -115,7 +115,8 @@
                     <td class="cell-id" th:text="${provider.id}">0</td>
                     <td class="cell-name" th:text="${provider.name}">Empresa</td>
                     <td class="cell-mono" th:text="${provider.taxId}">—</td>
-                    <td th:text="${provider.clientType.description}">—</td>
+
+                    <td th:text="${provider.providerType.description}">—</td>
 
                     <td class="t-center">
                         <span class="counter">
@@ -142,7 +143,7 @@
                 <tr th:if="${#lists.isEmpty(providers)}">
                     <td colspan="6">
                         <div class="empty">
-                            <p class="empty__title">Cap provider per mostrar</p>
+                            <p class="empty__title">Cap proveïdor per mostrar</p>
                             <p class="empty__text">Ajusta la cerca o dona d'alta la primera empresa.</p>
                             <a th:href="@{/provider/new}" class="btn btn--ink">+ Nou proveïdor</a>
                         </div>

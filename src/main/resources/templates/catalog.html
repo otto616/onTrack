@@ -67,7 +67,7 @@
 
         <div class="col-3">
           <label class="field__label" for="docClientType">Tipologia de provider</label>
-          <select id="docClientType" class="form-select" th:field="*{clientType}" required>
+          <select id="docClientType" class="form-select" th:field="*{providerType}" required>
             <option th:each="type : ${clientTypes}" th:value="${type}" th:text="${type.description}"></option>
           </select>
         </div>

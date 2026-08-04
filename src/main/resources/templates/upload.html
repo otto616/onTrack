@@ -17,12 +17,12 @@
     <a class="brand" th:href="@{/}">
       <span class="brand__mark">GV</span>
       <span class="brand__text">
-        <strong></strong>
-        <span>Gestor documental</span>
+        <strong>Gestor</strong>
+        <span>Documental</span>
       </span>
     </a>
     <nav class="appnav">
-      <a th:href="@{/}" class="appnav__link is-active">Clients</a>
+      <a th:href="@{/}" class="appnav__link is-active">Proveïdors</a>
       <a th:href="@{/catalog}" class="appnav__link">Catàleg</a>
     </nav>
   </div>
@@ -36,7 +36,7 @@
 
   <div class="pagehead">
     <div>
-      <span class="eyebrow" th:text="${document.provider.name}">Client</span>
+      <span class="eyebrow" th:text="${document.provider.name}">Proveïdor</span>
       <h1 class="pagehead__title" th:text="${document.documentType.name}">Document</h1>
       <p class="pagehead__sub">Adjunta el justificant per deixar constància d'aquest document.</p>
     </div>

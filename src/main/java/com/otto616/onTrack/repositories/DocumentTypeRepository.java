@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DocumentTypeRepository extends JpaRepository<DocumentType, Long> {
 
-    java.util.List<DocumentType> findByClientType(com.otto616.onTrack.models.Enums.ClientType clientType);
+    java.util.List<DocumentType> findByProviderType(com.otto616.onTrack.models.Enums.ProviderType clientType);
 
 }

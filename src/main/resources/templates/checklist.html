@@ -17,12 +17,12 @@
     <a class="brand" th:href="@{/}">
       <span class="brand__mark">GV</span>
       <span class="brand__text">
-        <strong></strong>
-        <span>Gestor documental</span>
+        <strong>Gestor</strong>
+        <span>Documental</span>
       </span>
     </a>
     <nav class="appnav">
-      <a th:href="@{/}" class="appnav__link is-active">Clients</a>
+      <a th:href="@{/}" class="appnav__link is-active">Proveïdors</a>
       <a th:href="@{/catalog}" class="appnav__link">Catàleg</a>
     </nav>
   </div>
@@ -30,13 +30,13 @@
 
 <main class="shell">
 
-  <a th:href="@{/}" class="backlink">&larr; Tots els providers</a>
+  <a th:href="@{/}" class="backlink">&larr; Tots els proveïdors</a>
 
   <div class="pagehead">
     <div>
-      <span class="eyebrow">Expedient del provider</span>
-      <h1 class="pagehead__title" th:text="${provider.name}">Nom del provider</h1>
-      <p class="pagehead__sub" th:text="${provider.clientType.description}">Tipologia</p>
+      <span class="eyebrow">Expedient del proveïdor</span>
+      <h1 class="pagehead__title" th:text="${provider.name}">Nom del proveïdor</h1>
+      <p class="pagehead__sub" th:text="${provider.providerType.description}">Tipologia</p>
     </div>
     <div class="pagehead__actions">
       <span class="pill pill--neutral pill--plain">Ref. <span th:text="${provider.id}">0</span></span>

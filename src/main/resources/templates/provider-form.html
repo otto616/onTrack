@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Nou client · Gestor Documental</title>
+  <title>Nou proveïdor · Gestor Documental</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
@@ -17,12 +17,12 @@
     <a class="brand" th:href="@{/}">
       <span class="brand__mark">GV</span>
       <span class="brand__text">
-        <strong></strong>
-        <span>Gestor documental</span>
+        <strong>Gestor</strong>
+        <span>Documental</span>
       </span>
     </a>
     <nav class="appnav">
-      <a th:href="@{/}" class="appnav__link is-active">Clients</a>
+      <a th:href="@{/}" class="appnav__link is-active">Proveïdors</a>
       <a th:href="@{/catalog}" class="appnav__link">Catàleg</a>
     </nav>
   </div>
@@ -30,12 +30,12 @@
 
 <main class="shell shell--narrow">
 
-  <a th:href="@{/}" class="backlink">&larr; Tots els clients</a>
+  <a th:href="@{/}" class="backlink">&larr; Tots els proveïdors</a>
 
   <div class="pagehead">
     <div>
       <span class="eyebrow">Alta</span>
-      <h1 class="pagehead__title">Nou client</h1>
+      <h1 class="pagehead__title">Nou proveïdor</h1>
       <p class="pagehead__sub">En crear-lo, s'hi assignarà la documentació que li correspon segons la tipologia.</p>
     </div>
   </div>
@@ -46,26 +46,27 @@
       <span class="panel__note">Tots els camps són obligatoris</span>
     </div>
 
-    <form th:action="@{/client/new}" th:object="${client}" method="post" class="panel__body">
+    <!--/*@thymesVar id="provider" type="com.otto616.onTrack.models.Provider"*/-->
+    <form th:action="@{/provider/new}" th:object="${provider}" method="post" class="panel__body">
 
       <div class="field">
-        <label class="field__label" for="clientName">Nom de l'empresa</label>
-        <input type="text" id="clientName" class="form-control" th:field="*{name}"
+        <label class="field__label" for="providerName">Nom de l'empresa</label>
+        <input type="text" id="providerName" class="form-control" th:field="*{name}"
                placeholder="Raó social completa" required />
       </div>
 
       <div class="field">
-        <label class="field__label" for="clientTaxId">NIF / CIF</label>
-        <input type="text" id="clientTaxId" class="form-control" th:field="*{taxId}"
+        <label class="field__label" for="providerTaxId">NIF / CIF</label>
+        <input type="text" id="providerTaxId" class="form-control" th:field="*{taxId}"
                placeholder="B12345678" required />
-        <p class="field__hint">S'utilitza per cercar el client des del directori.</p>
+        <p class="field__hint">S'utilitza per cercar el proveïdor des del directori.</p>
       </div>
 
       <div class="field">
-        <label class="field__label" for="clientType">Tipologia</label>
-        <select id="clientType" class="form-select" th:field="*{clientType}" required>
+        <label class="field__label" for="providerType">Tipologia</label>
+        <select id="providerType" class="form-select" th:field="*{providerType}" required>
           <option value="" disabled selected>Selecciona una tipologia</option>
-          <option th:each="type : ${clientTypes}"
+          <option th:each="type : ${providerTypes}"
                   th:value="${type}"
                   th:text="${type.description}"></option>
         </select>
@@ -74,7 +75,7 @@
 
       <div class="form-actions">
         <a th:href="@{/}" class="btn btn--quiet">Cancel·la</a>
-        <button type="submit" class="btn btn--ink">Crea el client</button>
+        <button type="submit" class="btn btn--ink">Crea el proveïdor</button>
       </div>
 
     </form>

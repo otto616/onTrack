@@ -2,14 +2,14 @@ package com.otto616.onTrack.models;
 
 public class Enums {
 
-    public enum ClientType {
+    public enum ProviderType {
         FREELANCE_NO_WORKERS("Freelance without workers"),
         FREELANCE_WITH_WORKERS("Company and Freelance with workers"),
         SUBCONTRACTOR_INDUSTRIAL("Subcontractor / Industrial");
 
         private final String description;
 
-        ClientType(String description) {
+        ProviderType(String description) {
             this.description = description;
         }
 

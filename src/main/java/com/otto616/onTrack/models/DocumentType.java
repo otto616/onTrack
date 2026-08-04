@@ -15,7 +15,7 @@ public class DocumentType {
     private Enums.DocumentCategory category;
 
     @Enumerated(EnumType.STRING)
-    private Enums.ClientType clientType;
+    private Enums.ProviderType providerType;
 
     private boolean expires;
 
@@ -32,8 +32,8 @@ public class DocumentType {
     public Enums.DocumentCategory getCategory() { return category; }
     public void setCategory(Enums.DocumentCategory category) { this.category = category; }
 
-    public Enums.ClientType getClientType() { return clientType; }
-    public void setClientType(Enums.ClientType clientType) { this.clientType = clientType; }
+    public Enums.ProviderType getProviderType() { return providerType; }
+    public void setProviderType(Enums.ProviderType clientType) { this.providerType = clientType; }
 
     public boolean isExpires() { return expires; }
     public void setExpires(boolean expires) { this.expires = expires; }

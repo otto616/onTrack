@@ -17,12 +17,12 @@
     <a class="brand" th:href="@{/}">
       <span class="brand__mark">GV</span>
       <span class="brand__text">
-        <strong></strong>
-        <span>Gestor documental</span>
+        <strong>Gestor</strong>
+        <span>Documental</span>
       </span>
     </a>
     <nav class="appnav">
-      <a th:href="@{/}" class="appnav__link is-active">Clients</a>
+      <a th:href="@{/}" class="appnav__link is-active">Proveïdors</a>
       <a th:href="@{/catalog}" class="appnav__link">Catàleg</a>
     </nav>
   </div>
@@ -30,20 +30,20 @@
 
 <main class="shell">
 
-  <a th:href="@{/}" class="backlink">&larr; Tots els clients</a>
+  <a th:href="@{/}" class="backlink">&larr; Tots els proveïdors</a>
 
   <div class="pagehead">
     <div>
-      <span class="eyebrow">Expedient del client</span>
-      <h1 class="pagehead__title" th:text="${client.name}">Nom del client</h1>
-      <p class="pagehead__sub" th:text="${client.clientType.description}">Tipologia</p>
+      <span class="eyebrow">Expedient del proveïdor</span>
+      <h1 class="pagehead__title" th:text="${provider.name}">Nom del proveïdor</h1>
+      <p class="pagehead__sub" th:text="${provider.providerType.description}">Tipologia</p>
     </div>
     <div class="pagehead__actions">
-      <span class="pill pill--neutral pill--plain">Ref. <span th:text="${client.id}">0</span></span>
+      <span class="pill pill--neutral pill--plain">Ref. <span th:text="${provider.id}">0</span></span>
     </div>
   </div>
 
-  <form th:action="@{/client/{id}/checklist(id=${client.id})}" th:object="${form}" method="post">
+  <form th:action="@{/provider/{id}/checklist(id=${provider.id})}" th:object="${form}" method="post">
 
     <div class="table-wrap">
       <div class="panel__head">

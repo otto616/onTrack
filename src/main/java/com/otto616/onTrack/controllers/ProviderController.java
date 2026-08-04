@@ -3,7 +3,7 @@ package com.otto616.onTrack.controllers;
 import com.otto616.onTrack.dto.ChecklistForm;
 import com.otto616.onTrack.models.*;
 import com.otto616.onTrack.repositories.ChecklistDocumentRepository;
-import com.otto616.onTrack.repositories.ClientRepository;
+import com.otto616.onTrack.repositories.ProviderRepository;
 import com.otto616.onTrack.repositories.DocumentTypeRepository;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -25,47 +25,47 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-public class ClientController {
+public class ProviderController {
 
-    private final ClientRepository clientRepository;
+    private final ProviderRepository providerRepository;
     private final ChecklistDocumentRepository checklistRepository;
     private final DocumentTypeRepository documentTypeRepository;
 
-    public ClientController(ClientRepository clientRepository, ChecklistDocumentRepository checklistRepository, DocumentTypeRepository documentTypeRepository) {
-        this.clientRepository = clientRepository;
+    public ProviderController(ProviderRepository providerRepository, ChecklistDocumentRepository checklistRepository, DocumentTypeRepository documentTypeRepository) {
+        this.providerRepository = providerRepository;
         this.checklistRepository = checklistRepository;
         this.documentTypeRepository = documentTypeRepository;
     }
 
     @GetMapping("/")
-    public String listClients(@RequestParam(value = "search", required = false) String search, Model model) {
+    public String listProviders(@RequestParam(value = "search", required = false) String search, Model model) {
         LocalDate today = LocalDate.now();
         LocalDate thirtyDaysFromNow = today.plusDays(30);
 
         List<ChecklistDocument> alerts = checklistRepository.findByExpirationDateLessThanEqual(thirtyDaysFromNow);
 
-        long totalClients = clientRepository.count();
+        long totalProviders = providerRepository.count();
         long pendingDocs = checklistRepository.countByReceivedFalse();
         long expiredDocs = checklistRepository.countByExpirationDateLessThan(today);
 
         List<Provider> providers;
         if (search != null && !search.isEmpty()) {
-            providers = clientRepository.findByNameContainingIgnoreCaseOrTaxIdContainingIgnoreCase(search, search);
+            providers = providerRepository.findByNameContainingIgnoreCaseOrTaxIdContainingIgnoreCase(search, search);
         } else {
-            providers = clientRepository.findAll();
+            providers = providerRepository.findAll();
         }
 
         Map<Long, Long> pendingMap = new HashMap<>();
         Map<Long, Long> expiredMap = new HashMap<>();
 
-        for (Provider c : providers) {
-            pendingMap.put(c.getId(), checklistRepository.countByClientIdAndReceivedFalse(c.getId()));
-            expiredMap.put(c.getId(), checklistRepository.countByClientIdAndExpirationDateLessThan(c.getId(), today));
+        for (Provider p : providers) {
+            pendingMap.put(p.getId(), checklistRepository.countByProviderIdAndReceivedFalse(p.getId()));
+            expiredMap.put(p.getId(), checklistRepository.countByProviderIdAndExpirationDateLessThan(p.getId(), today));
         }
 
-        model.addAttribute("clients", providers);
+        model.addAttribute("providers", providers);
         model.addAttribute("alerts", alerts);
-        model.addAttribute("totalClients", totalClients);
+        model.addAttribute("totalProviders", totalProviders);
         model.addAttribute("pendingDocs", pendingDocs);
         model.addAttribute("expiredDocs", expiredDocs);
         model.addAttribute("searchQuery", search);
@@ -75,30 +75,30 @@ public class ClientController {
         return "index";
     }
 
-    @GetMapping("/client/new")
-    public String newClientForm(Model model) {
-        model.addAttribute("client", new Provider());
-        model.addAttribute("clientTypes", Enums.ClientType.values());
-        return "client-form";
+    @GetMapping("/provider/new")
+    public String newProviderForm(Model model) {
+        model.addAttribute("provider", new Provider());
+        model.addAttribute("providerTypes", Enums.ProviderType.values());
+        return "provider-form";
     }
 
-    @PostMapping("/client/new")
-    public String saveClient(@ModelAttribute Provider provider) {
-        clientRepository.save(provider);
+    @PostMapping("/provider/new")
+    public String saveProvider(@ModelAttribute Provider provider) {
+        providerRepository.save(provider);
         return "redirect:/";
     }
 
-    @GetMapping("/client/{id}/checklist")
+    @GetMapping("/provider/{id}/checklist")
     public String viewChecklist(@PathVariable Long id, Model model) {
-        Provider provider = clientRepository.findById(id).orElseThrow();
-        List<ChecklistDocument> checklist = checklistRepository.findByClientId(id);
-        List<DocumentType> requiredDocs = documentTypeRepository.findByClientType(provider.getClientType());
+        Provider provider = providerRepository.findById(id).orElseThrow();
+        List<ChecklistDocument> checklist = checklistRepository.findByProviderId(id);
+        List<DocumentType> requiredDocs = documentTypeRepository.findByProviderType(provider.getProviderType());
 
         for (DocumentType docType : requiredDocs) {
             boolean exists = checklist.stream().anyMatch(c -> c.getDocumentType().getId().equals(docType.getId()));
             if (!exists) {
                 ChecklistDocument chk = new ChecklistDocument();
-                chk.setClient(provider);
+                chk.setProvider(provider);
                 chk.setDocumentType(docType);
                 chk.setReceived(false);
                 checklistRepository.save(chk);
@@ -109,12 +109,12 @@ public class ClientController {
         ChecklistForm form = new ChecklistForm();
         form.setDocuments(checklist);
 
-        model.addAttribute("client", provider);
+        model.addAttribute("provider", provider);
         model.addAttribute("form", form);
         return "checklist";
     }
 
-    @PostMapping("/client/{id}/checklist")
+    @PostMapping("/provider/{id}/checklist")
     public String saveChecklist(@PathVariable Long id, @ModelAttribute ChecklistForm form) {
         for (ChecklistDocument doc : form.getDocuments()) {
             ChecklistDocument existingDoc = checklistRepository.findById(doc.getId()).orElseThrow();
@@ -122,7 +122,7 @@ public class ClientController {
             existingDoc.setExpirationDate(doc.getExpirationDate());
             checklistRepository.save(existingDoc);
         }
-        return "redirect:/client/" + id + "/checklist";
+        return "redirect:/provider/" + id + "/checklist";
     }
 
     @GetMapping("/document/{id}/upload")
@@ -147,7 +147,7 @@ public class ClientController {
             doc.setReceived(true);
             checklistRepository.save(doc);
         }
-        return "redirect:/client/" + doc.getClient().getId() + "/checklist";
+        return "redirect:/provider/" + doc.getProvider().getId() + "/checklist";
     }
 
     @GetMapping("/document/{id}/download")

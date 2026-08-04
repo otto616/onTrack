@@ -22,7 +22,7 @@ public class CatalogController {
     public String viewCatalog(Model model) {
         model.addAttribute("documents", documentTypeRepository.findAll());
         model.addAttribute("newDocument", new DocumentType());
-        model.addAttribute("clientTypes", Enums.ClientType.values());
+        model.addAttribute("clientTypes", Enums.ProviderType.values());
         model.addAttribute("categories", Enums.DocumentCategory.values());
         return "catalog";
     }

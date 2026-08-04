@@ -1,7 +1,6 @@
 package com.otto616.onTrack.models;
 
 import jakarta.persistence.*;
-import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 
 @Entity
@@ -12,16 +11,13 @@ public class ChecklistDocument {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "client_id", nullable = false)
     private Provider provider;
 
     @ManyToOne
-    @JoinColumn(name = "document_type_id", nullable = false)
     private DocumentType documentType;
 
-    private boolean received = false;
+    private boolean received;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate expirationDate;
 
     private String fileName;
@@ -31,8 +27,8 @@ public class ChecklistDocument {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public Provider getClient() { return provider; }
-    public void setClient(Provider provider) { this.provider = provider; }
+    public Provider getProvider() { return provider; }
+    public void setProvider(Provider provider) { this.provider = provider; }
 
     public DocumentType getDocumentType() { return documentType; }
     public void setDocumentType(DocumentType documentType) { this.documentType = documentType; }
@@ -45,21 +41,4 @@ public class ChecklistDocument {
 
     public String getFileName() { return fileName; }
     public void setFileName(String fileName) { this.fileName = fileName; }
-
-    @Transient
-    public String getStatus() {
-        if (!received) {
-            return "PENDING";
-        }
-        if (expirationDate != null) {
-            LocalDate today = LocalDate.now();
-            if (expirationDate.isBefore(today)) {
-                return "EXPIRED";
-            }
-            if (expirationDate.isBefore(today.plusDays(30))) {
-                return "EXPIRING_SOON";
-            }
-        }
-        return "OK";
-    }
 }

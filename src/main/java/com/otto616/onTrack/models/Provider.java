@@ -15,7 +15,7 @@ public class Provider {
     private String taxId;
 
     @Enumerated(EnumType.STRING)
-    private Enums.ClientType clientType;
+    private Enums.ProviderType providerType;
 
     public Provider() {}
 
@@ -28,6 +28,6 @@ public class Provider {
     public String getTaxId() { return taxId; }
     public void setTaxId(String taxId) { this.taxId = taxId; }
 
-    public Enums.ClientType getClientType() { return clientType; }
-    public void setClientType(Enums.ClientType clientType) { this.clientType = clientType; }
+    public Enums.ProviderType getProviderType() { return providerType; }
+    public void setProviderType(Enums.ProviderType providerType) { this.providerType = providerType; }
 }
