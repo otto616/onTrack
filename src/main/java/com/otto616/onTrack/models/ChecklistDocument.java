@@ -41,4 +41,20 @@ public class ChecklistDocument {
 
     public String getFileName() { return fileName; }
     public void setFileName(String fileName) { this.fileName = fileName; }
+
+    public String getStatus() {
+        if (!received) {
+            return "PENDING";
+        }
+        if (expirationDate != null) {
+            LocalDate today = LocalDate.now();
+            if (expirationDate.isBefore(today)) {
+                return "EXPIRED";
+            }
+            if (!expirationDate.isAfter(today.plusDays(30))) {
+                return "EXPIRING_SOON";
+            }
+        }
+        return "OK";
+    }
 }
