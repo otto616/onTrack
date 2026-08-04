@@ -39,26 +39,6 @@
         </div>
     </div>
 
-    <section th:if="${not #lists.isEmpty(alerts)}" class="notice">
-        <button class="notice__toggle collapsed" type="button"
-                data-bs-toggle="collapse" data-bs-target="#alertsPanel"
-                aria-expanded="false" aria-controls="alertsPanel">
-            Hi ha documents caducats o a punt de caducar
-            <span class="notice__count" th:text="${#lists.size(alerts)} + ' avisos'">0 avisos</span>
-        </button>
-        <div id="alertsPanel" class="collapse">
-            <ul class="notice__list">
-                <li class="notice__item" th:each="alert : ${alerts}">
-                    <span class="notice__client" th:text="${alert.provider.name}">Empresa</span>
-                    <span class="notice__doc" th:text="${alert.documentType.name}">Document</span>
-                    <span th:if="${alert.status == 'EXPIRED'}" class="pill pill--danger">Caducat</span>
-                    <span th:if="${alert.status == 'EXPIRING_SOON'}" class="pill pill--warn">Caduca aviat</span>
-                    <span class="notice__date" th:text="${alert.expirationDate}">--</span>
-                </li>
-            </ul>
-        </div>
-    </section>
-
     <section class="stats">
         <div class="stat stat--total">
             <span class="eyebrow">Proveïdors</span>
