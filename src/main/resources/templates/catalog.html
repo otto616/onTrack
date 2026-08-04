@@ -30,13 +30,13 @@
 
 <main class="shell">
 
-  <a th:href="@{/}" class="backlink">&larr; Tots els clients</a>
+  <a th:href="@{/}" class="backlink">&larr; Tots els providers</a>
 
   <div class="pagehead">
     <div>
       <span class="eyebrow">Configuració</span>
       <h1 class="pagehead__title">Catàleg de documents</h1>
-      <p class="pagehead__sub">Defineix quins documents s'exigeixen i a quina tipologia de client.</p>
+      <p class="pagehead__sub">Defineix quins documents s'exigeixen i a quina tipologia de provider.</p>
     </div>
   </div>
 
@@ -46,7 +46,7 @@
         <span class="eyebrow">Alta</span>
         <div class="panel__title">Afegeix un document al catàleg</div>
       </div>
-      <span class="panel__note">S'aplicarà als clients de la tipologia escollida</span>
+      <span class="panel__note">S'aplicarà als providers de la tipologia escollida</span>
     </div>
 
     <form th:action="@{/catalog/new}" th:object="${newDocument}" method="post" class="panel__body">
@@ -66,7 +66,7 @@
         </div>
 
         <div class="col-3">
-          <label class="field__label" for="docClientType">Tipologia de client</label>
+          <label class="field__label" for="docClientType">Tipologia de provider</label>
           <select id="docClientType" class="form-select" th:field="*{clientType}" required>
             <option th:each="type : ${clientTypes}" th:value="${type}" th:text="${type.description}"></option>
           </select>

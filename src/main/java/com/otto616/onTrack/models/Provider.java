@@ -3,7 +3,7 @@ package com.otto616.onTrack.models;
 import jakarta.persistence.*;
 
 @Entity
-public class Client {
+public class Provider {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,7 +17,7 @@ public class Client {
     @Enumerated(EnumType.STRING)
     private Enums.ClientType clientType;
 
-    public Client() {}
+    public Provider() {}
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

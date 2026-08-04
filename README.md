@@ -20,9 +20,9 @@ To transition this prototype into a production-ready web application, the follow
 
 ## Key Features
 *   **Dynamic Dashboard:** View global statistics (Total Clients, Pending Documents, Expired Documents) and real-time alerts for documents expiring within 30 days.
-*   **Client Management:** Register and manage clients based on their specific typology (e.g., Subcontractor, Freelance with/without workers).
-*   **Master Catalog:** Configure the universal list of required documents per client type. Set expiration rules, categories (Company, Worker, Machinery), and official verification URLs.
-*   **Automated Checklists:** The system automatically generates a customized documentation checklist for each new client based on the active Master Catalog rules.
+*   **Client Management:** Register and manage providers based on their specific typology (e.g., Subcontractor, Freelance with/without workers).
+*   **Master Catalog:** Configure the universal list of required documents per provider type. Set expiration rules, categories (Company, Worker, Machinery), and official verification URLs.
+*   **Automated Checklists:** The system automatically generates a customized documentation checklist for each new provider based on the active Master Catalog rules.
 *   **File Management:** Upload, store, and download PDF or image files directly attached to their corresponding checklist requirement.
 *   **Status Tracking:** Visual badges automatically update to show if a document is *Pending*, *Verified (OK)*, *Expiring Soon*, or *Expired*.
 
@@ -61,13 +61,13 @@ First of all, clone the repository
 3. Open your web browser and go to: `http://localhost:8080`
 
 ## Testing and Usage Guide
-*   **Initial Data Seed:** Upon startup, the `DataLoader.java` component automatically populates the database with the official document catalog rules and generates several dummy clients. This allows you to immediately test the platform without manually inserting dozens of records.
+*   **Initial Data Seed:** Upon startup, the `DataLoader.java` component automatically populates the database with the official document catalog rules and generates several dummy providers. This allows you to immediately test the platform without manually inserting dozens of records.
 *   **Uploading Files:** When uploading a PDF or image via the checklist, a local `uploads/` directory will be automatically created in the root folder of the project.
-*   **Database Reset Notice:** Because this prototype utilizes an H2 In-Memory database, **all uploaded file references, manual date changes, and newly created clients will be erased** every time the server is stopped and restarted. The application will boot with a clean state on every execution.
+*   **Database Reset Notice:** Because this prototype utilizes an H2 In-Memory database, **all uploaded file references, manual date changes, and newly created providers will be erased** every time the server is stopped and restarted. The application will boot with a clean state on every execution.
 
 ## Project Structure
 *   `/controllers`: Handles web routing, HTTP requests, and Thymeleaf model generation.
-*   `/models`: JPA Entities representing the database structure (`Client`, `DocumentType`, `ChecklistDocument`) and Enums.
+*   `/models`: JPA Entities representing the database structure (`Provider`, `DocumentType`, `ChecklistDocument`) and Enums.
 *   `/repositories`: Spring Data JPA interfaces for seamless database operations and custom queries.
 *   `/bootstrap`: Contains `DataLoader.java` for initial database seeding.
 *   `/resources/templates`: Thymeleaf HTML views (`index.html`, `checklist.html`, `catalog.html`, `upload.html`, etc.).

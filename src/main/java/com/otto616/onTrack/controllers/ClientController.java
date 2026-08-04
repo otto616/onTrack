@@ -1,10 +1,7 @@
 package com.otto616.onTrack.controllers;
 
 import com.otto616.onTrack.dto.ChecklistForm;
-import com.otto616.onTrack.models.ChecklistDocument;
-import com.otto616.onTrack.models.Client;
-import com.otto616.onTrack.models.DocumentType;
-import com.otto616.onTrack.models.Enums;
+import com.otto616.onTrack.models.*;
 import com.otto616.onTrack.repositories.ChecklistDocumentRepository;
 import com.otto616.onTrack.repositories.ClientRepository;
 import com.otto616.onTrack.repositories.DocumentTypeRepository;
@@ -51,22 +48,22 @@ public class ClientController {
         long pendingDocs = checklistRepository.countByReceivedFalse();
         long expiredDocs = checklistRepository.countByExpirationDateLessThan(today);
 
-        List<Client> clients;
+        List<Provider> providers;
         if (search != null && !search.isEmpty()) {
-            clients = clientRepository.findByNameContainingIgnoreCaseOrTaxIdContainingIgnoreCase(search, search);
+            providers = clientRepository.findByNameContainingIgnoreCaseOrTaxIdContainingIgnoreCase(search, search);
         } else {
-            clients = clientRepository.findAll();
+            providers = clientRepository.findAll();
         }
 
         Map<Long, Long> pendingMap = new HashMap<>();
         Map<Long, Long> expiredMap = new HashMap<>();
 
-        for (Client c : clients) {
+        for (Provider c : providers) {
             pendingMap.put(c.getId(), checklistRepository.countByClientIdAndReceivedFalse(c.getId()));
             expiredMap.put(c.getId(), checklistRepository.countByClientIdAndExpirationDateLessThan(c.getId(), today));
         }
 
-        model.addAttribute("clients", clients);
+        model.addAttribute("clients", providers);
         model.addAttribute("alerts", alerts);
         model.addAttribute("totalClients", totalClients);
         model.addAttribute("pendingDocs", pendingDocs);
@@ -80,28 +77,28 @@ public class ClientController {
 
     @GetMapping("/client/new")
     public String newClientForm(Model model) {
-        model.addAttribute("client", new Client());
+        model.addAttribute("client", new Provider());
         model.addAttribute("clientTypes", Enums.ClientType.values());
         return "client-form";
     }
 
     @PostMapping("/client/new")
-    public String saveClient(@ModelAttribute Client client) {
-        clientRepository.save(client);
+    public String saveClient(@ModelAttribute Provider provider) {
+        clientRepository.save(provider);
         return "redirect:/";
     }
 
     @GetMapping("/client/{id}/checklist")
     public String viewChecklist(@PathVariable Long id, Model model) {
-        Client client = clientRepository.findById(id).orElseThrow();
+        Provider provider = clientRepository.findById(id).orElseThrow();
         List<ChecklistDocument> checklist = checklistRepository.findByClientId(id);
-        List<DocumentType> requiredDocs = documentTypeRepository.findByClientType(client.getClientType());
+        List<DocumentType> requiredDocs = documentTypeRepository.findByClientType(provider.getClientType());
 
         for (DocumentType docType : requiredDocs) {
             boolean exists = checklist.stream().anyMatch(c -> c.getDocumentType().getId().equals(docType.getId()));
             if (!exists) {
                 ChecklistDocument chk = new ChecklistDocument();
-                chk.setClient(client);
+                chk.setClient(provider);
                 chk.setDocumentType(docType);
                 chk.setReceived(false);
                 checklistRepository.save(chk);
@@ -112,7 +109,7 @@ public class ClientController {
         ChecklistForm form = new ChecklistForm();
         form.setDocuments(checklist);
 
-        model.addAttribute("client", client);
+        model.addAttribute("client", provider);
         model.addAttribute("form", form);
         return "checklist";
     }

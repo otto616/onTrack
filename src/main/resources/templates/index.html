@@ -22,10 +22,10 @@
             </span>
         </a>
         <nav class="appnav">
-            <a th:href="@{/}" class="appnav__link is-active">Clients</a>
+            <a th:href="@{/}" class="appnav__link is-active">Proveïdors</a>
             <a th:href="@{/catalog}" class="appnav__link">Catàleg</a>
         </nav>
-        <a th:href="@{/client/new}" class="btn btn--line btn--sm">+ Nou client</a>
+        <a th:href="@{/provider/new}" class="btn btn--line btn--sm">+ Nou proveïdor</a>
     </div>
 </header>
 
@@ -35,7 +35,7 @@
         <div>
             <span class="eyebrow">Panell de control</span>
             <h1 class="pagehead__title">Estat de la documentació</h1>
-            <p class="pagehead__sub">Tots els clients actius i el seu compliment documental.</p>
+            <p class="pagehead__sub">Tots els proveïdors actius i el seu compliment documental.</p>
         </div>
     </div>
 
@@ -49,7 +49,7 @@
         <div id="alertsPanel" class="collapse">
             <ul class="notice__list">
                 <li class="notice__item" th:each="alert : ${alerts}">
-                    <span class="notice__client" th:text="${alert.client.name}">Client</span>
+                    <span class="notice__client" th:text="${alert.provider.name}">Client</span>
                     <span class="notice__doc" th:text="${alert.documentType.name}">Document</span>
                     <span th:if="${alert.status == 'EXPIRED'}" class="pill pill--danger">Caducat</span>
                     <span th:if="${alert.status == 'EXPIRING_SOON'}" class="pill pill--warn">Caduca aviat</span>
@@ -61,7 +61,7 @@
 
     <section class="stats">
         <div class="stat stat--total">
-            <span class="eyebrow">Clients</span>
+            <span class="eyebrow">Proveïdors</span>
             <div class="stat__value" th:text="${totalClients}">0</div>
             <div class="stat__note">Empreses donades d'alta</div>
         </div>
@@ -80,7 +80,7 @@
     <div class="pagehead">
         <div>
             <span class="eyebrow">Directori</span>
-            <h2 class="pagehead__title">Clients</h2>
+            <h2 class="pagehead__title">Proveïdors</h2>
         </div>
         <div class="pagehead__actions">
             <form th:action="@{/}" method="get" class="search">
@@ -91,7 +91,7 @@
                    class="btn btn--quiet search__clear">Neteja</a>
             </form>
             <a th:href="@{/catalog}" class="btn btn--line">Catàleg de documents</a>
-            <a th:href="@{/client/new}" class="btn btn--ink">+ Nou client</a>
+            <a th:href="@{/provider/new}" class="btn btn--ink">+ Nou proveïdor</a>
         </div>
     </div>
 
@@ -109,42 +109,42 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="client : ${clients}" class="row-spine"
-                    th:classappend="${expiredMap.get(client.id) > 0 ? 'row--expired' : (pendingMap.get(client.id) > 0 ? '' : 'row--ok')}">
+                <tr th:each="provider : ${providers}" class="row-spine"
+                    th:classappend="${expiredMap.get(provider.id) > 0 ? 'row--expired' : (pendingMap.get(provider.id) > 0 ? '' : 'row--ok')}">
 
-                    <td class="cell-id" th:text="${client.id}">0</td>
-                    <td class="cell-name" th:text="${client.name}">Empresa</td>
-                    <td class="cell-mono" th:text="${client.taxId}">—</td>
-                    <td th:text="${client.clientType.description}">—</td>
+                    <td class="cell-id" th:text="${provider.id}">0</td>
+                    <td class="cell-name" th:text="${provider.name}">Empresa</td>
+                    <td class="cell-mono" th:text="${provider.taxId}">—</td>
+                    <td th:text="${provider.clientType.description}">—</td>
 
                     <td class="t-center">
                         <span class="counter">
-                            <span th:if="${pendingMap.get(client.id) == 0 and expiredMap.get(client.id) == 0}"
+                            <span th:if="${pendingMap.get(provider.id) == 0 and expiredMap.get(provider.id) == 0}"
                                   class="pill pill--ok">Tot en ordre</span>
-                            <span th:if="${pendingMap.get(client.id) > 0}" class="pill pill--warn"
+                            <span th:if="${pendingMap.get(provider.id) > 0}" class="pill pill--warn"
                                   title="Documents pendents de rebre">
-                                <span th:text="${pendingMap.get(client.id)}">0</span> pendents
+                                <span th:text="${pendingMap.get(provider.id)}">0</span> pendents
                             </span>
-                            <span th:if="${expiredMap.get(client.id) > 0}" class="pill pill--danger"
+                            <span th:if="${expiredMap.get(provider.id) > 0}" class="pill pill--danger"
                                   title="Documents caducats">
-                                <span th:text="${expiredMap.get(client.id)}">0</span> caducats
+                                <span th:text="${expiredMap.get(provider.id)}">0</span> caducats
                             </span>
                         </span>
                     </td>
 
                     <td class="t-right">
-                        <a th:href="@{/client/{id}/checklist(id=${client.id})}" class="btn btn--line btn--sm">
+                        <a th:href="@{/provider/{id}/checklist(id=${provider.id})}" class="btn btn--line btn--sm">
                             Obre l'expedient
                         </a>
                     </td>
                 </tr>
 
-                <tr th:if="${#lists.isEmpty(clients)}">
+                <tr th:if="${#lists.isEmpty(providers)}">
                     <td colspan="6">
                         <div class="empty">
-                            <p class="empty__title">Cap client per mostrar</p>
+                            <p class="empty__title">Cap provider per mostrar</p>
                             <p class="empty__text">Ajusta la cerca o dona d'alta la primera empresa.</p>
-                            <a th:href="@{/client/new}" class="btn btn--ink">+ Nou client</a>
+                            <a th:href="@{/provider/new}" class="btn btn--ink">+ Nou proveïdor</a>
                         </div>
                     </td>
                 </tr>

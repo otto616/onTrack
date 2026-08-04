@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Nou client · Gestor Documental</title>
+  <title>Nou provider · Gestor Documental</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
@@ -30,12 +30,12 @@
 
 <main class="shell shell--narrow">
 
-  <a th:href="@{/}" class="backlink">&larr; Tots els clients</a>
+  <a th:href="@{/}" class="backlink">&larr; Tots els providers</a>
 
   <div class="pagehead">
     <div>
       <span class="eyebrow">Alta</span>
-      <h1 class="pagehead__title">Nou client</h1>
+      <h1 class="pagehead__title">Nou provider</h1>
       <p class="pagehead__sub">En crear-lo, s'hi assignarà la documentació que li correspon segons la tipologia.</p>
     </div>
   </div>
@@ -46,7 +46,7 @@
       <span class="panel__note">Tots els camps són obligatoris</span>
     </div>
 
-    <form th:action="@{/client/new}" th:object="${client}" method="post" class="panel__body">
+    <form th:action="@{/provider/new}" th:object="${provider}" method="post" class="panel__body">
 
       <div class="field">
         <label class="field__label" for="clientName">Nom de l'empresa</label>
@@ -58,7 +58,7 @@
         <label class="field__label" for="clientTaxId">NIF / CIF</label>
         <input type="text" id="clientTaxId" class="form-control" th:field="*{taxId}"
                placeholder="B12345678" required />
-        <p class="field__hint">S'utilitza per cercar el client des del directori.</p>
+        <p class="field__hint">S'utilitza per cercar el provider des del directori.</p>
       </div>
 
       <div class="field">
@@ -74,7 +74,7 @@
 
       <div class="form-actions">
         <a th:href="@{/}" class="btn btn--quiet">Cancel·la</a>
-        <button type="submit" class="btn btn--ink">Crea el client</button>
+        <button type="submit" class="btn btn--ink">Crea el provider</button>
       </div>
 
     </form>

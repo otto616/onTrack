@@ -22,10 +22,10 @@
             </span>
         </a>
         <nav class="appnav">
-            <a th:href="@{/}" class="appnav__link is-active">Clients</a>
+            <a th:href="@{/}" class="appnav__link is-active">Proveïdors</a>
             <a th:href="@{/catalog}" class="appnav__link">Catàleg</a>
         </nav>
-        <a th:href="@{/client/new}" class="btn btn--line btn--sm">+ Nou client</a>
+        <a th:href="@{/client/new}" class="btn btn--line btn--sm">+ Nou proveïdor</a>
     </div>
 </header>
 
@@ -35,7 +35,7 @@
         <div>
             <span class="eyebrow">Panell de control</span>
             <h1 class="pagehead__title">Estat de la documentació</h1>
-            <p class="pagehead__sub">Tots els clients actius i el seu compliment documental.</p>
+            <p class="pagehead__sub">Tots els proveïdors actius i el seu compliment documental.</p>
         </div>
     </div>
 
@@ -61,7 +61,7 @@
 
     <section class="stats">
         <div class="stat stat--total">
-            <span class="eyebrow">Clients</span>
+            <span class="eyebrow">Proveïdors</span>
             <div class="stat__value" th:text="${totalClients}">0</div>
             <div class="stat__note">Empreses donades d'alta</div>
         </div>
@@ -80,7 +80,7 @@
     <div class="pagehead">
         <div>
             <span class="eyebrow">Directori</span>
-            <h2 class="pagehead__title">Clients</h2>
+            <h2 class="pagehead__title">Proveïdors</h2>
         </div>
         <div class="pagehead__actions">
             <form th:action="@{/}" method="get" class="search">
@@ -91,7 +91,7 @@
                    class="btn btn--quiet search__clear">Neteja</a>
             </form>
             <a th:href="@{/catalog}" class="btn btn--line">Catàleg de documents</a>
-            <a th:href="@{/client/new}" class="btn btn--ink">+ Nou client</a>
+            <a th:href="@{/client/new}" class="btn btn--ink">+ Nou proveïdor</a>
         </div>
     </div>
 
@@ -144,7 +144,7 @@
                         <div class="empty">
                             <p class="empty__title">Cap client per mostrar</p>
                             <p class="empty__text">Ajusta la cerca o dona d'alta la primera empresa.</p>
-                            <a th:href="@{/client/new}" class="btn btn--ink">+ Nou client</a>
+                            <a th:href="@{/client/new}" class="btn btn--ink">+ Nou proveïdor</a>
                         </div>
                     </td>
                 </tr>

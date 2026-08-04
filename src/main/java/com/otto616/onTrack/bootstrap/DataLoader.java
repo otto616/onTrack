@@ -1,6 +1,6 @@
 package com.otto616.onTrack.bootstrap;
 
-import com.otto616.onTrack.models.Client;
+import com.otto616.onTrack.models.Provider;
 import com.otto616.onTrack.models.DocumentType;
 import com.otto616.onTrack.models.Enums;
 import com.otto616.onTrack.repositories.ChecklistDocumentRepository;
@@ -57,10 +57,10 @@ public class DataLoader implements CommandLineRunner {
     }
 
     private void createClient(String name, String taxId, Enums.ClientType clientType) {
-        Client client = new Client();
-        client.setName(name);
-        client.setTaxId(taxId);
-        client.setClientType(clientType);
-        clientRepository.save(client);
+        Provider provider = new Provider();
+        provider.setName(name);
+        provider.setTaxId(taxId);
+        provider.setClientType(clientType);
+        clientRepository.save(provider);
     }
 }

@@ -13,7 +13,7 @@ public class ChecklistDocument {
 
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
-    private Client client;
+    private Provider provider;
 
     @ManyToOne
     @JoinColumn(name = "document_type_id", nullable = false)
@@ -31,8 +31,8 @@ public class ChecklistDocument {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public Client getClient() { return client; }
-    public void setClient(Client client) { this.client = client; }
+    public Provider getClient() { return provider; }
+    public void setClient(Provider provider) { this.provider = provider; }
 
     public DocumentType getDocumentType() { return documentType; }
     public void setDocumentType(DocumentType documentType) { this.documentType = documentType; }
