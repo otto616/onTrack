@@ -9,6 +9,11 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .dropdown-menu { border-color: var(--line); border-radius: var(--r-md); box-shadow: var(--shadow-2); font-size: 14px; }
+        .dropdown-item { padding: 8px 16px; color: var(--ink-2); font-weight: 500; }
+        .dropdown-item:hover { background-color: var(--surface-2); color: var(--ink); }
+    </style>
 </head>
 <body>
 
@@ -38,24 +43,6 @@
             <p class="pagehead__sub">Tots els proveïdors actius i el seu compliment documental.</p>
         </div>
     </div>
-
-    <section class="stats">
-        <div class="stat stat--total">
-            <span class="eyebrow">Proveïdors</span>
-            <div class="stat__value" th:text="${totalProviders}">0</div>
-            <div class="stat__note">Empreses donades d'alta</div>
-        </div>
-        <div class="stat stat--pending">
-            <span class="eyebrow">Pendents de rebre</span>
-            <div class="stat__value" th:text="${pendingDocs}">0</div>
-            <div class="stat__note">Documents que encara no han arribat</div>
-        </div>
-        <div class="stat stat--expired">
-            <span class="eyebrow">Caducats</span>
-            <div class="stat__value" th:text="${expiredDocs}">0</div>
-            <div class="stat__note">Requereixen renovació immediata</div>
-        </div>
-    </section>
 
     <div class="pagehead">
         <div>
@@ -114,9 +101,22 @@
                     </td>
 
                     <td class="t-right">
-                        <a th:href="@{/provider/{id}/checklist(id=${provider.id})}" class="btn btn--line btn--sm">
-                            Obre l'expedient
-                        </a>
+                        <div class="dropdown" style="display: inline-block;">
+                            <button class="btn btn--line btn--sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Obre l'expedient
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" th:href="@{/provider/{id}/checklist(id=${provider.id})}">📄 Documentació general</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" th:href="@{/provider/{id}/workers(id=${provider.id})}">👷 Treballadors</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" th:href="@{/provider/{id}/machinery(id=${provider.id})}">🚜 Maquinària</a>
+                                </li>
+                            </ul>
+                        </div>
                     </td>
                 </tr>
 

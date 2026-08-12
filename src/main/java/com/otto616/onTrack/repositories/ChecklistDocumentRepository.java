@@ -14,4 +14,6 @@ public interface ChecklistDocumentRepository extends JpaRepository<ChecklistDocu
     List<ChecklistDocument> findByProviderId(Long providerId);
     long countByProviderIdAndReceivedFalse(Long providerId);
     long countByProviderIdAndExpirationDateLessThan(Long providerId, LocalDate date);
+    List<ChecklistDocument> findByWorkerId(Long workerId);
+    List<ChecklistDocument> findByMachineryId(Long machineryId);
 }

@@ -44,10 +44,6 @@ public class ProviderController {
 
         List<ChecklistDocument> alerts = checklistRepository.findByExpirationDateLessThanEqual(thirtyDaysFromNow);
 
-        long totalProviders = providerRepository.count();
-        long pendingDocs = checklistRepository.countByReceivedFalse();
-        long expiredDocs = checklistRepository.countByExpirationDateLessThan(today);
-
         List<Provider> providers;
         if (search != null && !search.isEmpty()) {
             providers = providerRepository.findByNameContainingIgnoreCaseOrTaxIdContainingIgnoreCase(search, search);
@@ -65,9 +61,6 @@ public class ProviderController {
 
         model.addAttribute("providers", providers);
         model.addAttribute("alerts", alerts);
-        model.addAttribute("totalProviders", totalProviders);
-        model.addAttribute("pendingDocs", pendingDocs);
-        model.addAttribute("expiredDocs", expiredDocs);
         model.addAttribute("searchQuery", search);
         model.addAttribute("pendingMap", pendingMap);
         model.addAttribute("expiredMap", expiredMap);
@@ -91,8 +84,11 @@ public class ProviderController {
     @GetMapping("/provider/{id}/checklist")
     public String viewChecklist(@PathVariable Long id, Model model) {
         Provider provider = providerRepository.findById(id).orElseThrow();
-        List<ChecklistDocument> checklist = checklistRepository.findByProviderId(id);
-        List<DocumentType> requiredDocs = documentTypeRepository.findByProviderType(provider.getProviderType());
+        List<ChecklistDocument> checklist = checklistRepository.findByProviderId(id).stream()
+                .filter(c -> c.getWorker() == null && c.getMachinery() == null).toList();
+
+        List<DocumentType> requiredDocs = documentTypeRepository.findByProviderType(provider.getProviderType())
+                .stream().filter(d -> d.getCategory() == Enums.DocumentCategory.COMPANY).toList();
 
         for (DocumentType docType : requiredDocs) {
             boolean exists = checklist.stream().anyMatch(c -> c.getDocumentType().getId().equals(docType.getId()));
@@ -102,12 +98,14 @@ public class ProviderController {
                 chk.setDocumentType(docType);
                 chk.setReceived(false);
                 checklistRepository.save(chk);
-                checklist.add(chk);
             }
         }
 
+        List<ChecklistDocument> updatedChecklist = checklistRepository.findByProviderId(id).stream()
+                .filter(c -> c.getWorker() == null && c.getMachinery() == null).toList();
+
         ChecklistForm form = new ChecklistForm();
-        form.setDocuments(checklist);
+        form.setDocuments(updatedChecklist);
 
         model.addAttribute("provider", provider);
         model.addAttribute("form", form);
@@ -147,6 +145,9 @@ public class ProviderController {
             doc.setReceived(true);
             checklistRepository.save(doc);
         }
+
+        if (doc.getWorker() != null) return "redirect:/provider/" + doc.getProvider().getId() + "/workers/" + doc.getWorker().getId() + "/checklist";
+        if (doc.getMachinery() != null) return "redirect:/provider/" + doc.getProvider().getId() + "/machinery/" + doc.getMachinery().getId() + "/checklist";
         return "redirect:/provider/" + doc.getProvider().getId() + "/checklist";
     }
 
@@ -159,5 +160,16 @@ public class ProviderController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + doc.getFileName() + "\"")
                 .body(resource);
+    }
+
+    @GetMapping("/document/{id}/toggle-exempt")
+    public String toggleExempt(@PathVariable Long id) {
+        ChecklistDocument doc = checklistRepository.findById(id).orElseThrow();
+        doc.setExempt(!doc.isExempt());
+        checklistRepository.save(doc);
+
+        if (doc.getWorker() != null) return "redirect:/provider/" + doc.getProvider().getId() + "/workers/" + doc.getWorker().getId() + "/checklist";
+        if (doc.getMachinery() != null) return "redirect:/provider/" + doc.getProvider().getId() + "/machinery/" + doc.getMachinery().getId() + "/checklist";
+        return "redirect:/provider/" + doc.getProvider().getId() + "/checklist";
     }
 }

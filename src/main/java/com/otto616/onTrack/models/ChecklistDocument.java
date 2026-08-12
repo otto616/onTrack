@@ -14,6 +14,12 @@ public class ChecklistDocument {
     private Provider provider;
 
     @ManyToOne
+    private Worker worker;
+
+    @ManyToOne
+    private Machinery machinery;
+
+    @ManyToOne
     private DocumentType documentType;
 
     private boolean received;
@@ -22,6 +28,8 @@ public class ChecklistDocument {
 
     private String fileName;
 
+    private boolean exempt = false;
+
     public ChecklistDocument() {}
 
     public Long getId() { return id; }
@@ -29,6 +37,12 @@ public class ChecklistDocument {
 
     public Provider getProvider() { return provider; }
     public void setProvider(Provider provider) { this.provider = provider; }
+
+    public Worker getWorker() { return worker; }
+    public void setWorker(Worker worker) { this.worker = worker; }
+
+    public Machinery getMachinery() { return machinery; }
+    public void setMachinery(Machinery machinery) { this.machinery = machinery; }
 
     public DocumentType getDocumentType() { return documentType; }
     public void setDocumentType(DocumentType documentType) { this.documentType = documentType; }
@@ -42,7 +56,13 @@ public class ChecklistDocument {
     public String getFileName() { return fileName; }
     public void setFileName(String fileName) { this.fileName = fileName; }
 
+    public boolean isExempt() { return exempt; }
+    public void setExempt(boolean exempt) { this.exempt = exempt; }
+
     public String getStatus() {
+        if (exempt) {
+            return "EXEMPT";
+        }
         if (!received) {
             return "PENDING";
         }

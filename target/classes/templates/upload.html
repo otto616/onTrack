@@ -30,9 +30,9 @@
 
 <main class="shell shell--narrow">
 
-  <a th:href="@{/provider/{id}/checklist(id=${document.provider.id})}" class="backlink">
-    &larr; Torna a l'expedient
-  </a>
+  <a th:if="${document.worker != null}" th:href="@{/provider/{pid}/workers/{wid}/checklist(pid=${document.provider.id}, wid=${document.worker.id})}" class="backlink">&larr; Torna a l'expedient del treballador</a>
+  <a th:if="${document.machinery != null}" th:href="@{/provider/{pid}/machinery/{mid}/checklist(pid=${document.provider.id}, mid=${document.machinery.id})}" class="backlink">&larr; Torna a l'expedient de la màquina</a>
+  <a th:if="${document.worker == null and document.machinery == null}" th:href="@{/provider/{id}/checklist(id=${document.provider.id})}" class="backlink">&larr; Torna a l'expedient</a>
 
   <div class="pagehead">
     <div>
@@ -59,7 +59,10 @@
       </div>
 
       <div class="form-actions">
-        <a th:href="@{/provider/{id}/checklist(id=${document.provider.id})}" class="btn btn--quiet">Cancel·la</a>
+        <a th:if="${document.worker != null}" th:href="@{/provider/{pid}/workers/{wid}/checklist(pid=${document.provider.id}, wid=${document.worker.id})}" class="btn btn--quiet">Cancel·la</a>
+        <a th:if="${document.machinery != null}" th:href="@{/provider/{pid}/machinery/{mid}/checklist(pid=${document.provider.id}, mid=${document.machinery.id})}" class="btn btn--quiet">Cancel·la</a>
+        <a th:if="${document.worker == null and document.machinery == null}" th:href="@{/provider/{id}/checklist(id=${document.provider.id})}" class="btn btn--quiet">Cancel·la</a>
+
         <button type="submit" class="btn btn--ink">Desa l'arxiu</button>
       </div>
 
