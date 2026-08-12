@@ -4,52 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Maquinària · Gestor Documental</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+
 <header class="appbar">
     <div class="appbar__inner">
         <a class="brand" th:href="@{/}">
             <span class="brand__mark">GV</span>
-            <span class="brand__text"><strong>Gestor</strong><span>Documental</span></span>
+            <span class="brand__text">
+        <strong>Gestor</strong>
+        <span>Documental</span>
+      </span>
         </a>
+        <nav class="appnav">
+            <a th:href="@{/}" class="appnav__link">Proveïdors</a>
+            <a th:href="@{/catalog}" class="appnav__link">Catàleg</a>
+        </nav>
     </div>
 </header>
+
 <main class="shell shell--narrow">
+
     <a th:href="@{/provider/{id}/machinery(id=${provider.id})}" class="backlink">&larr; Torna a la maquinària</a>
+
     <div class="pagehead">
         <div>
             <span class="eyebrow" th:text="${provider.name}">Proveïdor</span>
-            <h1 class="pagehead__title" th:text="${machinery.id != null ? 'Edita màquina' : 'Nova màquina'}">Màquina</h1>
+            <h1 class="pagehead__title"
+                th:text="${machinery.id != null ? 'Edita màquina' : 'Nova màquina'}">Màquina</h1>
         </div>
     </div>
+
     <div class="panel">
         <div class="panel__head">
             <div class="panel__title">Dades i documentació tècnica</div>
         </div>
-        <form th:action="${machinery.id != null ? '/provider/' + provider.id + '/machinery/' + machinery.id + '/edit' : '/provider/' + provider.id + '/machinery/new'}" th:object="${machinery}" method="post" class="panel__body">
-            <div class="field">
-                <label class="field__label">Descripció o Model</label>
-                <input type="text" th:field="*{name}" class="form-control" required>
-            </div>
+
+        <form th:action="${machinery.id != null
+                       ? '/provider/' + provider.id + '/machinery/' + machinery.id + '/edit'
+                       : '/provider/' + provider.id + '/machinery/new'}"
+              th:object="${machinery}" method="post" class="panel__body">
+
             <div class="formgrid">
-                <div class="field col-6">
-                    <label class="field__label">Codi Intern</label>
-                    <input type="text" th:field="*{internalCode}" class="form-control">
+
+                <div class="fg-12">
+                    <label class="field__label" for="machName">Descripció o model</label>
+                    <input type="text" id="machName" th:field="*{name}" class="form-control"
+                           placeholder="Ex.: Retroexcavadora JCB 3CX" required>
                 </div>
-                <div class="field col-6">
-                    <label class="field__label">Número de Sèrie / Bastidor</label>
-                    <input type="text" th:field="*{serialNumber}" class="form-control" required>
+
+                <div class="fg-6">
+                    <label class="field__label" for="machCode">Codi intern</label>
+                    <input type="text" id="machCode" th:field="*{internalCode}" class="form-control">
+                    <p class="field__hint">Opcional. Referència que useu internament.</p>
                 </div>
-            </div>
-            <div class="form-actions">
-                <a th:href="@{/provider/{id}/machinery(id=${provider.id})}" class="btn btn--quiet">Cancel·la</a>
-                <button type="submit" class="btn btn--ink">Desa la màquina</button>
+
+                <div class="fg-6">
+                    <label class="field__label" for="machSerial">Número de sèrie / bastidor</label>
+                    <input type="text" id="machSerial" th:field="*{serialNumber}" class="form-control" required>
+                </div>
+
+                <div class="fg-12">
+                    <div class="form-actions">
+                        <a th:href="@{/provider/{id}/machinery(id=${provider.id})}" class="btn btn--quiet">Cancel·la</a>
+                        <button type="submit" class="btn btn--ink">Desa la màquina</button>
+                    </div>
+                </div>
+
             </div>
         </form>
     </div>
+
 </main>
+
+<footer class="sitefoot">
+    <div class="sitefoot__inner">
+        <span>Gestor documental intern</span>
+    </div>
+</footer>
+
 </body>
 </html>

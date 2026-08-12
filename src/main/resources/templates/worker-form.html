@@ -4,56 +4,93 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Treballador · Gestor Documental</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+
 <header class="appbar">
     <div class="appbar__inner">
         <a class="brand" th:href="@{/}">
             <span class="brand__mark">GV</span>
-            <span class="brand__text"><strong>Gestor</strong><span>Documental</span></span>
+            <span class="brand__text">
+        <strong>Gestor</strong>
+        <span>Documental</span>
+      </span>
         </a>
+        <nav class="appnav">
+            <a th:href="@{/}" class="appnav__link">Proveïdors</a>
+            <a th:href="@{/catalog}" class="appnav__link">Catàleg</a>
+        </nav>
     </div>
 </header>
+
 <main class="shell shell--narrow">
+
     <a th:href="@{/provider/{id}/workers(id=${provider.id})}" class="backlink">&larr; Torna als treballadors</a>
+
     <div class="pagehead">
         <div>
             <span class="eyebrow" th:text="${provider.name}">Proveïdor</span>
-            <h1 class="pagehead__title" th:text="${worker.id != null ? 'Edita treballador' : 'Nou treballador'}">Treballador</h1>
+            <h1 class="pagehead__title"
+                th:text="${worker.id != null ? 'Edita treballador' : 'Nou treballador'}">Treballador</h1>
         </div>
     </div>
+
     <div class="panel">
         <div class="panel__head">
             <div class="panel__title">Dades personals i documentació</div>
         </div>
-        <form th:action="${worker.id != null ? '/provider/' + provider.id + '/workers/' + worker.id + '/edit' : '/provider/' + provider.id + '/workers/new'}" th:object="${worker}" method="post" class="panel__body">
-            <div class="field">
-                <label class="field__label">Nom i Cognoms</label>
-                <input type="text" th:field="*{name}" class="form-control" required>
-            </div>
+
+        <form th:action="${worker.id != null
+                       ? '/provider/' + provider.id + '/workers/' + worker.id + '/edit'
+                       : '/provider/' + provider.id + '/workers/new'}"
+              th:object="${worker}" method="post" class="panel__body">
+
             <div class="formgrid">
-                <div class="field col-6">
-                    <label class="field__label">DNI / NIE</label>
-                    <input type="text" th:field="*{dni}" class="form-control" required>
+
+                <div class="fg-12">
+                    <label class="field__label" for="wName">Nom i cognoms</label>
+                    <input type="text" id="wName" th:field="*{name}" class="form-control" required>
                 </div>
-                <div class="field col-6">
-                    <label class="field__label">Telèfon de contacte</label>
-                    <input type="text" th:field="*{phone}" class="form-control">
+
+                <div class="fg-6">
+                    <label class="field__label" for="wDni">DNI / NIE</label>
+                    <input type="text" id="wDni" th:field="*{dni}" class="form-control" required>
                 </div>
-            </div>
-            <div class="field">
-                <label class="field__label">Número Seguretat Social (NAF)</label>
-                <input type="text" th:field="*{socialSecurity}" class="form-control">
-            </div>
-            <div class="form-actions">
-                <a th:href="@{/provider/{id}/workers(id=${provider.id})}" class="btn btn--quiet">Cancel·la</a>
-                <button type="submit" class="btn btn--ink">Desa el treballador</button>
+
+                <div class="fg-6">
+                    <label class="field__label" for="wPhone">Telèfon de contacte</label>
+                    <input type="tel" id="wPhone" th:field="*{phone}" class="form-control">
+                </div>
+
+                <div class="fg-6">
+                    <label class="field__label" for="wNaf">Número Seguretat Social (NAF)</label>
+                    <input type="text" id="wNaf" th:field="*{socialSecurity}" class="form-control">
+                    <p class="field__hint">Opcional. 12 dígits, sense espais.</p>
+                </div>
+
+                <div class="fg-12">
+                    <div class="form-actions">
+                        <a th:href="@{/provider/{id}/workers(id=${provider.id})}" class="btn btn--quiet">Cancel·la</a>
+                        <button type="submit" class="btn btn--ink">Desa el treballador</button>
+                    </div>
+                </div>
+
             </div>
         </form>
     </div>
+
 </main>
+
+<footer class="sitefoot">
+    <div class="sitefoot__inner">
+        <span>Gestor documental intern</span>
+    </div>
+</footer>
+
 </body>
 </html>

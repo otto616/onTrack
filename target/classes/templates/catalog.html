@@ -17,12 +17,12 @@
     <a class="brand" th:href="@{/}">
       <span class="brand__mark">GV</span>
       <span class="brand__text">
-        <strong></strong>
-        <span>Gestor documental</span>
+        <strong>Gestor</strong>
+        <span>Documental</span>
       </span>
     </a>
     <nav class="appnav">
-      <a th:href="@{/}" class="appnav__link">Clients</a>
+      <a th:href="@{/}" class="appnav__link">Proveïdors</a>
       <a th:href="@{/catalog}" class="appnav__link is-active">Catàleg</a>
     </nav>
   </div>
@@ -30,63 +30,64 @@
 
 <main class="shell">
 
-  <a th:href="@{/}" class="backlink">&larr; Tots els providers</a>
+  <a th:href="@{/}" class="backlink">&larr; Tots els proveïdors</a>
 
   <div class="pagehead">
     <div>
       <span class="eyebrow">Configuració</span>
       <h1 class="pagehead__title">Catàleg de documents</h1>
-      <p class="pagehead__sub">Defineix quins documents s'exigeixen i a quina tipologia de provider.</p>
+      <p class="pagehead__sub">Defineix quins documents s'exigeixen i a quina tipologia de proveïdor.</p>
     </div>
   </div>
 
-  <div class="panel" style="margin-bottom:28px;">
+  <div class="panel panel--gap">
     <div class="panel__head">
       <div>
         <span class="eyebrow">Alta</span>
         <div class="panel__title">Afegeix un document al catàleg</div>
       </div>
-      <span class="panel__note">S'aplicarà als providers de la tipologia escollida</span>
+      <span class="panel__note">S'aplicarà als proveïdors de la tipologia escollida</span>
     </div>
 
     <form th:action="@{/catalog/new}" th:object="${newDocument}" method="post" class="panel__body">
       <div class="formgrid">
 
-        <div class="col-4">
+        <div class="fg-5">
           <label class="field__label" for="docName">Nom del document</label>
           <input type="text" id="docName" class="form-control" th:field="*{name}"
                  placeholder="Ex.: Certificat de la Seguretat Social" required>
         </div>
 
-        <div class="col-3">
+        <div class="fg-3">
           <label class="field__label" for="docCategory">Categoria</label>
           <select id="docCategory" class="form-select" th:field="*{category}" required>
             <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat.description}"></option>
           </select>
         </div>
 
-        <div class="col-3">
-          <label class="field__label" for="docClientType">Tipologia de provider</label>
+        <div class="fg-4">
+          <label class="field__label" for="docClientType">Tipologia de proveïdor</label>
           <select id="docClientType" class="form-select" th:field="*{providerType}" required>
             <option th:each="type : ${clientTypes}" th:value="${type}" th:text="${type.description}"></option>
           </select>
         </div>
 
-        <div class="col-4">
+        <div class="fg-5">
           <label class="field__label" for="docUrl">URL de verificació</label>
           <input type="url" id="docUrl" class="form-control" th:field="*{verificationUrl}"
                  placeholder="https://…">
           <p class="field__hint">Opcional. Enllaç oficial per comprovar el document.</p>
         </div>
 
-        <div class="col-4" style="display:flex; align-items:center; padding-top:22px;">
+        <div class="fg-4 field--check">
+          <span class="field__label field__label--ghost" aria-hidden="true"></span>
           <label class="check-inline" for="expiresCheck">
             <input class="form-check-input" type="checkbox" th:field="*{expires}" id="expiresCheck">
-            Aquest document caduca
+            <span>Aquest document caduca</span>
           </label>
         </div>
 
-        <div class="col-12">
+        <div class="fg-12">
           <div class="form-actions">
             <button type="submit" class="btn btn--ink">Afegeix al catàleg</button>
           </div>
