@@ -22,6 +22,18 @@
     --danger:     #A32219;  --danger-bg:  #FBE9E7;  --danger-line: #E6A9A2;
     --neutral:    #5A6880;  --neutral-bg: #EDEFF3;  --neutral-line:#C3CBD8;
 
+    /* --- ESTATS INTERACTIUS: un únic pas de contrast per a tota la web --- */
+    --hover-tint:        rgba(16, 28, 51, .06);    /* vel fosc: fons clars i transparents */
+    --hover-tint-strong: rgba(16, 28, 51, .10);    /* mateix vel, per a :active */
+    --hover-veil:        rgba(255, 255, 255, .10); /* vel clar: sobre fons foscos */
+
+    --line-3:         #B0B9C7;   /* vora intermèdia: --line-2 -> --ink-4 era massa brusc */
+    --ink-hover:      #1E2B45;
+    --ink-active:     #263352;
+    --cobalt-hover:   #2549A3;
+    --surface-hover:  #EFF2F7;   /* deliberadament != --surface-2 */
+    --surface-active: #E7EBF2;
+
     --r-sm: 4px;
     --r-md: 6px;
     --r-lg: 10px;
@@ -151,10 +163,11 @@ a:hover { color: var(--cobalt-dk); text-decoration: underline; text-underline-of
     padding: 8px 14px;
     border-radius: var(--r-sm);
     text-decoration: none;
-    transition: background .15s, color .15s;
+    transition: background-color .15s ease, color .15s ease;
 }
-.appnav__link:hover { background: rgba(255, 255, 255, .08); color: #fff; text-decoration: none; }
-.appnav__link.is-active { color: #fff; background: rgba(255, 255, 255, .12); }
+/* Sobre fons fosc, el pas de contrast és el vel clar */
+.appnav__link:hover { background-color: var(--hover-veil); color: #fff; text-decoration: none; }
+.appnav__link.is-active { color: #fff; background-color: rgba(255, 255, 255, .16); }
 
 .shell {
     max-width: 1360px;
@@ -298,8 +311,11 @@ a:hover { color: var(--cobalt-dk); text-decoration: underline; text-underline-of
     font-weight: 700;
     color: var(--warn);
     cursor: pointer;
+    transition: background-color .15s ease;
 }
-.notice__toggle:hover { background: #F8EACB; }
+/* Mateix pas de contrast, sense hex fixat a mà */
+.notice__toggle:hover { background-image: linear-gradient(var(--hover-tint), var(--hover-tint)); }
+
 .notice__count {
     margin-left: auto;
     font-size: 11px;
@@ -376,8 +392,13 @@ table.table-x tbody td {
     color: var(--ink-2);
 }
 table.table-x tbody tr:last-child td { border-bottom: none; }
-table.table-x tbody tr { transition: background .12s; }
-table.table-x tbody tr:hover { background: var(--surface-2); }
+table.table-x tbody tr { transition: background-color .12s ease; }
+
+/* El vel es pinta damunt del color propi de la fila: normal, warn o expired.
+   Cap fila perd el seu color en fer hover i ja no calen !important. */
+table.table-x tbody tr:hover {
+    background-image: linear-gradient(var(--hover-tint), var(--hover-tint));
+}
 
 .t-center { text-align: center !important; }
 .t-right  { text-align: right !important; }
@@ -407,9 +428,7 @@ table.table-x tbody tr:hover { background: var(--surface-2); }
 .row--ok      > td:first-child::before { background: var(--ok-line); }
 
 .row--expired { background: var(--danger-bg); }
-.row--expired:hover { background: #F8E0DD !important; }
-.row--warn { background: var(--warn-bg); }
-.row--warn:hover { background: #F8EACB !important; }
+.row--warn    { background: var(--warn-bg); }
 
 .rowgroup {
     font-size: 10.5px;
@@ -465,15 +484,36 @@ table.table-x tbody tr:hover { background: var(--surface-2); }
     border-radius: var(--r-sm);
     padding: 3px 8px;
     margin-top: 6px;
+    transition: background-color .15s ease, color .15s ease;
 }
-.tag:hover { background: #E0E9FB; color: var(--cobalt-dk); text-decoration: none; }
+.tag:hover {
+    background-image: linear-gradient(var(--hover-tint), var(--hover-tint));
+    color: var(--cobalt-dk);
+    text-decoration: none;
+}
 
 .counter { display: inline-flex; gap: 6px; align-items: center; }
 
+/* ============================================================
+   BOTONS
+   Un únic :hover per a totes les variants. Les variants només
+   declaren colors mitjançant tokens, mai regles :hover pròpies.
+   ============================================================ */
+
 .btn {
+    /* Estat base */
     --btn-bg: transparent;
     --btn-fg: var(--ink-2);
     --btn-bd: var(--line-2);
+
+    /* Estat hover */
+    --btn-bg-hover: var(--hover-tint);
+    --btn-fg-hover: var(--ink);
+    --btn-bd-hover: var(--line-3);
+
+    /* Estat active */
+    --btn-bg-active: var(--hover-tint-strong);
+
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -486,35 +526,72 @@ table.table-x tbody tr:hover { background: var(--surface-2); }
     padding: 10px 16px;
     border-radius: var(--r-md);
     border: 1px solid var(--btn-bd);
-    background: var(--btn-bg);
+    background-color: var(--btn-bg);
     color: var(--btn-fg);
     cursor: pointer;
     white-space: nowrap;
     text-decoration: none;
-    transition: background .15s, border-color .15s, color .15s, transform .08s;
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease, transform .08s ease;
 }
-.btn:hover { text-decoration: none; }
-.btn:active { transform: translateY(1px); }
+
+.btn:hover {
+    background-color: var(--btn-bg-hover);
+    border-color: var(--btn-bd-hover);
+    color: var(--btn-fg-hover);
+    text-decoration: none;
+}
+
+.btn:active {
+    background-color: var(--btn-bg-active);
+    transform: translateY(1px);
+}
+
+.btn:disabled,
+.btn[aria-disabled="true"] {
+    opacity: .5;
+    pointer-events: none;
+}
 
 .btn--ink {
-    background-color: var(--ink);
-    color: #FFFFFF;
-    border-color: var(--ink);
+    --btn-bg: var(--ink);
+    --btn-fg: #FFFFFF;
+    --btn-bd: var(--ink);
+    --btn-bg-hover: var(--ink-hover);
+    --btn-fg-hover: #FFFFFF;
+    --btn-bd-hover: var(--ink-hover);
+    --btn-bg-active: var(--ink-active);
 }
-.btn--ink:hover {
-    background-color: var(--ink-2);
-    border-color: var(--ink-2);
-    color: #FFFFFF;
+
+.btn--cobalt {
+    --btn-bg: var(--cobalt);
+    --btn-fg: #FFFFFF;
+    --btn-bd: var(--cobalt);
+    --btn-bg-hover: var(--cobalt-hover);
+    --btn-fg-hover: #FFFFFF;
+    --btn-bd-hover: var(--cobalt-hover);
+    --btn-bg-active: var(--cobalt-dk);
 }
 
-.btn--line { --btn-bg: var(--surface); --btn-fg: var(--ink-2); --btn-bd: var(--line-2); }
-.btn--line:hover { --btn-bg: var(--surface-2); --btn-bd: var(--ink-4); color: var(--ink); }
+.btn--line {
+    --btn-bg: var(--surface);
+    --btn-fg: var(--ink-2);
+    --btn-bd: var(--line-2);
+    --btn-bg-hover: var(--surface-hover);
+    --btn-fg-hover: var(--ink);
+    --btn-bd-hover: var(--line-3);
+    --btn-bg-active: var(--surface-active);
+}
 
-.btn--cobalt { --btn-bg: var(--cobalt); --btn-fg: #fff; --btn-bd: var(--cobalt); }
-.btn--cobalt:hover { --btn-bg: var(--cobalt-dk); --btn-bd: var(--cobalt-dk); color: #fff; }
-
-.btn--quiet { --btn-bg: transparent; --btn-fg: var(--ink-3); --btn-bd: transparent; }
-.btn--quiet:hover { --btn-bg: var(--neutral-bg); color: var(--ink); }
+/* Fons translúcid: es veu igual sobre --surface, --surface-2 i --paper */
+.btn--quiet {
+    --btn-bg: transparent;
+    --btn-fg: var(--ink-3);
+    --btn-bd: transparent;
+    --btn-bg-hover: var(--hover-tint);
+    --btn-fg-hover: var(--ink);
+    --btn-bd-hover: transparent;
+    --btn-bg-active: var(--hover-tint-strong);
+}
 
 .btn--sm { padding: 6px 11px; font-size: 12.5px; border-radius: var(--r-sm); }
 .btn--lg { padding: 13px 24px; font-size: 15px; }
@@ -563,14 +640,18 @@ input[type="file"].form-control::file-selector-button {
     font-weight: 600;
     font-size: 13px;
     color: var(--ink);
-    background: var(--surface-2);
+    background-color: var(--surface-2);
     border: 1px solid var(--line-2);
     border-radius: var(--r-sm);
     padding: 6px 12px;
     margin-right: 12px;
     cursor: pointer;
+    transition: background-color .15s ease, border-color .15s ease;
 }
-input[type="file"].form-control::file-selector-button:hover { background: var(--neutral-bg); }
+input[type="file"].form-control::file-selector-button:hover {
+    background-color: var(--surface-hover);
+    border-color: var(--line-3);
+}
 
 .form-check-input {
     width: 1.15rem;
@@ -653,6 +734,19 @@ input[type="file"].form-control::file-selector-button:hover { background: var(--
     .pagehead__title { font-size: 25px; }
     .search { min-width: 0; width: 100%; }
     .pagehead__actions { width: 100%; }
+}
+
+/* En pantalles tàctils no hi ha punter: el hover s'hi queda "enganxat"
+   després de tocar, així que el desactivem i deixem només :active. */
+@media (hover: none) {
+    .btn:hover {
+        background-color: var(--btn-bg);
+        border-color: var(--btn-bd);
+        color: var(--btn-fg);
+    }
+    table.table-x tbody tr:hover,
+    .notice__toggle:hover,
+    .tag:hover { background-image: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
