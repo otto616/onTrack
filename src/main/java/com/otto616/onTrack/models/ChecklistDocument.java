@@ -1,7 +1,10 @@
 package com.otto616.onTrack.models;
 
 import jakarta.persistence.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class ChecklistDocument {
@@ -24,11 +27,16 @@ public class ChecklistDocument {
 
     private boolean received;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate expirationDate;
 
     private String fileName;
 
     private boolean exempt = false;
+
+    @OneToMany(mappedBy = "checklistDocument", cascade = CascadeType.ALL)
+    @OrderBy("uploadDate DESC")
+    private List<DocumentVersion> versions = new ArrayList<>();
 
     public ChecklistDocument() {}
 
@@ -58,6 +66,9 @@ public class ChecklistDocument {
 
     public boolean isExempt() { return exempt; }
     public void setExempt(boolean exempt) { this.exempt = exempt; }
+
+    public List<DocumentVersion> getVersions() { return versions; }
+    public void setVersions(List<DocumentVersion> versions) { this.versions = versions; }
 
     public String getStatus() {
         if (exempt) {

@@ -55,8 +55,8 @@
                         </td>
                         <td class="t-center">
                             <a th:href="@{/document/{id}/toggle-exempt(id=${doc.id})}" class="btn btn--sm" th:classappend="${doc.exempt ? 'btn--ink' : 'btn--quiet'}" th:text="${doc.exempt ? 'Activa' : 'Ignora'}"></a>
-                            <a th:if="${doc.fileName == null and !doc.exempt}" th:href="@{/document/{id}/upload(id=${doc.id})}" class="btn btn--line btn--sm">Puja arxiu</a>
-                            <a th:if="${doc.fileName != null and !doc.exempt}" th:href="@{/document/{id}/download(id=${doc.id})}" class="btn btn--cobalt btn--sm">Obre arxiu</a>
+                            <a th:if="${doc.fileName == null and !doc.exempt}" th:href="@{/document/{id}/history(id=${doc.id})}" class="btn btn--line btn--sm">+ Puja</a>
+                            <a th:if="${doc.fileName != null and !doc.exempt}" th:href="@{/document/{id}/history(id=${doc.id})}" class="btn btn--cobalt btn--sm">Obre</a>
                         </td>
                         <td class="t-center">
                             <input th:if="${!doc.exempt}" class="form-check-input" type="checkbox" th:field="*{documents[__${stat.index}__].received}" />

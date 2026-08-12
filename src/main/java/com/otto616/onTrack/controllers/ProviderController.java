@@ -3,11 +3,14 @@ package com.otto616.onTrack.controllers;
 import com.otto616.onTrack.dto.ChecklistForm;
 import com.otto616.onTrack.models.*;
 import com.otto616.onTrack.repositories.ChecklistDocumentRepository;
+import com.otto616.onTrack.repositories.DocumentVersionRepository;
 import com.otto616.onTrack.repositories.ProviderRepository;
 import com.otto616.onTrack.repositories.DocumentTypeRepository;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,11 +33,13 @@ public class ProviderController {
     private final ProviderRepository providerRepository;
     private final ChecklistDocumentRepository checklistRepository;
     private final DocumentTypeRepository documentTypeRepository;
+    private final DocumentVersionRepository documentVersionRepository;
 
-    public ProviderController(ProviderRepository providerRepository, ChecklistDocumentRepository checklistRepository, DocumentTypeRepository documentTypeRepository) {
+    public ProviderController(ProviderRepository providerRepository, ChecklistDocumentRepository checklistRepository, DocumentTypeRepository documentTypeRepository, DocumentVersionRepository documentVersionRepository) {
         this.providerRepository = providerRepository;
         this.checklistRepository = checklistRepository;
         this.documentTypeRepository = documentTypeRepository;
+        this.documentVersionRepository = documentVersionRepository;
     }
 
     @GetMapping("/")
@@ -123,45 +128,6 @@ public class ProviderController {
         return "redirect:/provider/" + id + "/checklist";
     }
 
-    @GetMapping("/document/{id}/upload")
-    public String uploadForm(@PathVariable Long id, Model model) {
-        ChecklistDocument doc = checklistRepository.findById(id).orElseThrow();
-        model.addAttribute("document", doc);
-        return "upload";
-    }
-
-    @PostMapping("/document/{id}/upload")
-    public String saveFile(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
-        ChecklistDocument doc = checklistRepository.findById(id).orElseThrow();
-
-        if (!file.isEmpty()) {
-            String uploadDir = "uploads/";
-            Files.createDirectories(Paths.get(uploadDir));
-            String storedFileName = id + "_" + file.getOriginalFilename();
-            Path path = Paths.get(uploadDir + storedFileName);
-            Files.write(path, file.getBytes());
-
-            doc.setFileName(storedFileName);
-            doc.setReceived(true);
-            checklistRepository.save(doc);
-        }
-
-        if (doc.getWorker() != null) return "redirect:/provider/" + doc.getProvider().getId() + "/workers/" + doc.getWorker().getId() + "/checklist";
-        if (doc.getMachinery() != null) return "redirect:/provider/" + doc.getProvider().getId() + "/machinery/" + doc.getMachinery().getId() + "/checklist";
-        return "redirect:/provider/" + doc.getProvider().getId() + "/checklist";
-    }
-
-    @GetMapping("/document/{id}/download")
-    public ResponseEntity<Resource> downloadFile(@PathVariable Long id) throws MalformedURLException {
-        ChecklistDocument doc = checklistRepository.findById(id).orElseThrow();
-        Path path = Paths.get("uploads/" + doc.getFileName());
-        Resource resource = new UrlResource(path.toUri());
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + doc.getFileName() + "\"")
-                .body(resource);
-    }
-
     @GetMapping("/document/{id}/toggle-exempt")
     public String toggleExempt(@PathVariable Long id) {
         ChecklistDocument doc = checklistRepository.findById(id).orElseThrow();
@@ -171,5 +137,73 @@ public class ProviderController {
         if (doc.getWorker() != null) return "redirect:/provider/" + doc.getProvider().getId() + "/workers/" + doc.getWorker().getId() + "/checklist";
         if (doc.getMachinery() != null) return "redirect:/provider/" + doc.getProvider().getId() + "/machinery/" + doc.getMachinery().getId() + "/checklist";
         return "redirect:/provider/" + doc.getProvider().getId() + "/checklist";
+    }
+
+    @GetMapping("/document/{id}/history")
+    public String viewHistory(@PathVariable Long id, Model model) {
+        ChecklistDocument doc = checklistRepository.findById(id).orElseThrow();
+        model.addAttribute("document", doc);
+        return "document-history";
+    }
+
+    @PostMapping("/document/{id}/history/upload")
+    public String saveVersion(@PathVariable Long id,
+                              @RequestParam("file") MultipartFile file,
+                              @RequestParam(value = "expirationDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate expirationDate) throws IOException {
+        ChecklistDocument doc = checklistRepository.findById(id).orElseThrow();
+
+        if (!file.isEmpty()) {
+            String uploadDir = "uploads/";
+            Files.createDirectories(Paths.get(uploadDir));
+            String uniquePrefix = System.currentTimeMillis() + "_";
+            String storedFileName = id + "_" + uniquePrefix + file.getOriginalFilename();
+            Path path = Paths.get(uploadDir + storedFileName);
+            Files.write(path, file.getBytes());
+
+            DocumentVersion version = new DocumentVersion();
+            version.setChecklistDocument(doc);
+            version.setFileName(storedFileName);
+            version.setOriginalFileName(file.getOriginalFilename());
+            version.setUploadDate(LocalDate.now());
+            version.setExpirationDate(expirationDate);
+
+            documentVersionRepository.save(version);
+
+            doc.setFileName(storedFileName);
+            doc.setReceived(true);
+            if (expirationDate != null) {
+                doc.setExpirationDate(expirationDate);
+            }
+            checklistRepository.save(doc);
+        }
+        return "redirect:/document/" + id + "/history";
+    }
+
+    @GetMapping("/document/version/{versionId}/download")
+    public ResponseEntity<Resource> downloadVersion(@PathVariable Long versionId) throws MalformedURLException {
+        DocumentVersion version = documentVersionRepository.findById(versionId).orElseThrow();
+        Path path = Paths.get("uploads/" + version.getFileName());
+        Resource resource = new UrlResource(path.toUri());
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + version.getOriginalFileName() + "\"")
+                .body(resource);
+    }
+
+    @GetMapping("/document/version/{versionId}/view")
+    public ResponseEntity<Resource> viewVersion(@PathVariable Long versionId) throws IOException {
+        DocumentVersion version = documentVersionRepository.findById(versionId).orElseThrow();
+        Path path = Paths.get("uploads/" + version.getFileName());
+        Resource resource = new UrlResource(path.toUri());
+
+        String contentType = Files.probeContentType(path);
+        if (contentType == null) {
+            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + version.getOriginalFileName() + "\"")
+                .body(resource);
     }
 }

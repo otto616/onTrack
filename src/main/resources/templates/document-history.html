@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Històric de Document · Gestor Documental</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="appbar">
+    <div class="appbar__inner">
+        <a class="brand" th:href="@{/}">
+            <span class="brand__mark">GV</span>
+            <span class="brand__text">
+                <strong>Gestor</strong>
+                <span>Documental</span>
+            </span>
+        </a>
+        <nav class="appnav">
+            <a th:href="@{/}" class="appnav__link">Proveïdors</a>
+            <a th:href="@{/catalog}" class="appnav__link">Catàleg</a>
+        </nav>
+    </div>
+</header>
+
+<main class="shell">
+
+    <a th:if="${document.worker != null}" th:href="@{/provider/{pid}/workers/{wid}/checklist(pid=${document.provider.id}, wid=${document.worker.id})}" class="backlink">&larr; Torna a l'expedient del treballador</a>
+    <a th:if="${document.machinery != null}" th:href="@{/provider/{pid}/machinery/{mid}/checklist(pid=${document.provider.id}, mid=${document.machinery.id})}" class="backlink">&larr; Torna a l'expedient de la màquina</a>
+    <a th:if="${document.worker == null and document.machinery == null}" th:href="@{/provider/{id}/checklist(id=${document.provider.id})}" class="backlink">&larr; Torna a l'expedient general</a>
+
+    <div class="pagehead">
+        <div>
+            <span class="eyebrow" th:text="${document.provider.name}">Proveïdor</span>
+            <h1 class="pagehead__title" th:text="${document.documentType.name}">Document</h1>
+            <p class="pagehead__sub">Històric de versions i control d'arxius.</p>
+        </div>
+    </div>
+
+    <div class="panel panel--gap" style="margin-bottom: 32px;">
+        <div class="panel__head">
+            <div>
+                <span class="eyebrow">Nova versió</span>
+                <div class="panel__title">Afegeix una nova versió a l'històric</div>
+            </div>
+        </div>
+
+        <form th:action="@{/document/{id}/history/upload(id=${document.id})}" method="post" enctype="multipart/form-data" class="panel__body">
+            <div class="formgrid">
+
+                <div class="fg-5">
+                    <label class="field__label">Selecciona l'arxiu</label>
+                    <input type="file" name="file" class="form-control" accept=".pdf,.png,.jpg,.jpeg" required>
+                </div>
+
+                <div class="fg-4" th:if="${document.documentType.expires}">
+                    <label class="field__label">Data de caducitat</label>
+                    <input type="date" name="expirationDate" class="form-control" required>
+                </div>
+
+                <div th:class="${document.documentType.expires ? 'fg-3' : 'fg-7'}">
+                    <label class="field__label field__label--ghost" aria-hidden="true"></label>
+                    <button type="submit" class="btn btn--ink" style="width: 100%;">Puja la versió</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    <div class="table-wrap">
+        <div class="table-scroll">
+            <table class="table-x">
+                <thead>
+                <tr>
+                    <th>Data de pujada</th>
+                    <th>Nom de l'arxiu</th>
+                    <th>Caducitat</th>
+                    <th class="t-right">Accions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="version : ${document.versions}" class="row-spine">
+                    <td th:text="${#temporals.format(version.uploadDate, 'dd/MM/yyyy')}"></td>
+                    <td class="cell-name" th:text="${version.originalFileName}"></td>
+                    <td>
+                        <span th:if="${version.expirationDate != null}" th:text="${#temporals.format(version.expirationDate, 'dd/MM/yyyy')}"></span>
+                        <span th:if="${version.expirationDate == null}" class="cell-sub">Sense caducitat</span>
+                    </td>
+                    <td class="t-right">
+                        <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                            <a th:href="@{/document/version/{vid}/view(vid=${version.id})}" class="btn btn--line btn--sm" target="_blank">Obre</a>
+                            <a th:href="@{/document/version/{vid}/download(vid=${version.id})}" class="btn btn--cobalt btn--sm">Descarrega</a>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(document.versions)}">
+                    <td colspan="4">
+                        <div class="empty">
+                            <p class="empty__title">Cap arxiu pujat</p>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer class="sitefoot">
+    <div class="sitefoot__inner">
+        <span>Gestor documental intern</span>
+    </div>
+</footer>
+
+</body>
+</html>
