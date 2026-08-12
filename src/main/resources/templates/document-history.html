@@ -44,13 +44,18 @@
 
     <div class="panel panel--gap" style="margin-bottom: 32px;">
         <div class="panel__head">
-            <div>
+            <div th:if="${editVersion == null}">
                 <span class="eyebrow">Edició i noves versions</span>
                 <div class="panel__title">Actualitza l'estat o puja un nou arxiu</div>
             </div>
+            <div th:if="${editVersion != null}">
+                <span class="eyebrow" style="color: var(--cobalt);">Correcció d'errors</span>
+                <div class="panel__title">Edita el registre vigent</div>
+            </div>
+            <a th:if="${editVersion != null}" th:href="@{/document/{id}/history(id=${document.id})}" class="btn btn--sm" style="border: 1px solid var(--danger); color: var(--danger); background-color: var(--danger-bg);">Cancel·la l'edició</a>
         </div>
 
-        <form th:action="@{/document/{id}/history/upload(id=${document.id})}" method="post" enctype="multipart/form-data" class="panel__body">
+        <form th:action="${editVersion != null} ? @{/document/version/{vid}/edit(vid=${editVersion.id})} : @{/document/{id}/history/upload(id=${document.id})}" method="post" enctype="multipart/form-data" class="panel__body">
             <div class="formgrid">
 
                 <div class="fg-5">
@@ -60,7 +65,7 @@
 
                 <div class="fg-3" th:if="${document.documentType.expires}">
                     <label class="field__label">Data de caducitat</label>
-                    <input type="date" name="expirationDate" class="form-control" th:value="${document.expirationDate}">
+                    <input type="date" name="expirationDate" class="form-control" th:value="${editVersion != null ? editVersion.expirationDate : document.expirationDate}">
                 </div>
 
                 <div th:class="${document.documentType.expires ? 'fg-2 field--check' : 'fg-4 field--check'}">
@@ -73,7 +78,7 @@
 
                 <div th:class="${document.documentType.expires ? 'fg-2' : 'fg-3'}">
                     <label class="field__label field__label--ghost" aria-hidden="true"></label>
-                    <button type="submit" class="btn btn--ink" style="width: 100%;">Desa</button>
+                    <button type="submit" class="btn btn--ink" style="width: 100%;" th:text="${editVersion != null ? 'Desa els canvis' : 'Desa'}">Desa</button>
                 </div>
 
             </div>
@@ -92,8 +97,11 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="version : ${document.versions}" class="row-spine">
-                    <td th:text="${#temporals.format(version.uploadDate, 'dd/MM/yyyy')}"></td>
+                <tr th:each="version, stat : ${document.versions}" class="row-spine" th:style="${stat.first} ? 'background-color: var(--ok-bg);' : ''">
+                    <td style="display: flex; align-items: center; border-bottom: none; height: 100%;">
+                        <span th:text="${#temporals.format(version.uploadDate, 'dd/MM/yyyy')}"></span>
+                        <span th:if="${stat.first}" class="pill pill--ok" style="margin-left: 12px; font-size: 10px; padding: 2px 8px;">VIGENT</span>
+                    </td>
                     <td class="cell-name" th:text="${version.originalFileName}"></td>
                     <td>
                         <span th:if="${version.expirationDate != null}" th:text="${#temporals.format(version.expirationDate, 'dd/MM/yyyy')}"></span>
@@ -101,6 +109,7 @@
                     </td>
                     <td class="t-right">
                         <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                            <a th:if="${stat.first}" th:href="@{/document/version/{vid}/edit(vid=${version.id})}" class="btn btn--line btn--sm">Edita</a>
                             <a th:href="@{/document/version/{vid}/view(vid=${version.id})}" class="btn btn--line btn--sm" target="_blank">Obre</a>
                             <a th:href="@{/document/version/{vid}/download(vid=${version.id})}" class="btn btn--cobalt btn--sm">Descarrega</a>
                         </div>

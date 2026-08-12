@@ -35,7 +35,7 @@ public class ChecklistDocument {
     private boolean exempt = false;
 
     @OneToMany(mappedBy = "checklistDocument", cascade = CascadeType.ALL)
-    @OrderBy("uploadDate DESC")
+    @OrderBy("id DESC")
     private List<DocumentVersion> versions = new ArrayList<>();
 
     public ChecklistDocument() {}

@@ -275,4 +275,47 @@ public class ProviderController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + version.getOriginalFileName() + "\"")
                 .body(resource);
     }
+
+    @GetMapping("/document/version/{versionId}/edit")
+    public String editVersionForm(@PathVariable Long versionId, Model model) {
+        DocumentVersion version = documentVersionRepository.findById(versionId).orElseThrow();
+        ChecklistDocument doc = version.getChecklistDocument();
+        model.addAttribute("document", doc);
+        model.addAttribute("editVersion", version);
+        return "document-history";
+    }
+
+    @PostMapping("/document/version/{versionId}/edit")
+    public String updateVersion(@PathVariable Long versionId,
+                                @RequestParam(value = "file", required = false) MultipartFile file,
+                                @RequestParam(value = "expirationDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate expirationDate,
+                                @RequestParam(value = "received", defaultValue = "false") boolean received) throws IOException {
+
+        DocumentVersion version = documentVersionRepository.findById(versionId).orElseThrow();
+        ChecklistDocument doc = version.getChecklistDocument();
+
+        if (file != null && !file.isEmpty()) {
+            String uploadDir = "uploads/";
+            Files.createDirectories(Paths.get(uploadDir));
+            String uniquePrefix = System.currentTimeMillis() + "_";
+            String storedFileName = doc.getId() + "_" + uniquePrefix + file.getOriginalFilename();
+            Path path = Paths.get(uploadDir + storedFileName);
+            Files.write(path, file.getBytes());
+
+            version.setFileName(storedFileName);
+            version.setOriginalFileName(file.getOriginalFilename());
+            doc.setFileName(storedFileName);
+        }
+
+        version.setExpirationDate(expirationDate);
+        documentVersionRepository.save(version);
+
+        doc.setReceived(received);
+        if (expirationDate != null) {
+            doc.setExpirationDate(expirationDate);
+        }
+        checklistRepository.save(doc);
+
+        return "redirect:/document/" + doc.getId() + "/history";
+    }
 }
