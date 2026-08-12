@@ -3,8 +3,8 @@ package com.otto616.onTrack.models;
 public class Enums {
 
     public enum ProviderType {
-        FREELANCE_NO_WORKERS("Freelance without workers"),
-        FREELANCE_WITH_WORKERS("Company and Freelance with workers"),
+        FREELANCE_NO_WORKERS("Autònom Sense Treballadors"),
+        FREELANCE_WITH_WORKERS("Empresa o Autònom Amb Trebalaldors"),
         SUBCONTRACTOR_INDUSTRIAL("Subcontractor / Industrial");
 
         private final String description;
@@ -19,9 +19,9 @@ public class Enums {
     }
 
     public enum DocumentCategory {
-        COMPANY("Company"),
-        WORKER("Workers"),
-        MACHINERY("Machinery");
+        COMPANY("Empresa"),
+        WORKER("Treballadors"),
+        MACHINERY("Maquinària");
 
         private final String description;
 
