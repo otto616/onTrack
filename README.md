@@ -40,7 +40,7 @@ Ensure you have the following installed on your system:
 
 ## How to Run Locally
 
-First of all, clone the repository
+First of all, clone the repository.
 
 ### Option 1: Using IntelliJ IDEA (Recommended)
 1. Open IntelliJ IDEA and select **Open**. Navigate to the `onTrack` project folder.
