@@ -22,16 +22,15 @@
     --danger:     #A32219;  --danger-bg:  #FBE9E7;  --danger-line: #E6A9A2;
     --neutral:    #5A6880;  --neutral-bg: #EDEFF3;  --neutral-line:#C3CBD8;
 
-    /* --- ESTATS INTERACTIUS: un únic pas de contrast per a tota la web --- */
-    --hover-tint:        rgba(16, 28, 51, .06);    /* vel fosc: fons clars i transparents */
-    --hover-tint-strong: rgba(16, 28, 51, .10);    /* mateix vel, per a :active */
-    --hover-veil:        rgba(255, 255, 255, .10); /* vel clar: sobre fons foscos */
+    --hover-tint:        rgba(16, 28, 51, .06);
+    --hover-tint-strong: rgba(16, 28, 51, .10);
+    --hover-veil:        rgba(255, 255, 255, .10);
 
-    --line-3:         #B0B9C7;   /* vora intermèdia: --line-2 -> --ink-4 era massa brusc */
+    --line-3:         #B0B9C7;
     --ink-hover:      #1E2B45;
     --ink-active:     #263352;
     --cobalt-hover:   #2549A3;
-    --surface-hover:  #EFF2F7;   /* deliberadament != --surface-2 */
+    --surface-hover:  #EFF2F7;
     --surface-active: #E7EBF2;
 
     --r-sm: 4px;
@@ -165,7 +164,6 @@ a:hover { color: var(--cobalt-dk); text-decoration: underline; text-underline-of
     text-decoration: none;
     transition: background-color .15s ease, color .15s ease;
 }
-/* Sobre fons fosc, el pas de contrast és el vel clar */
 .appnav__link:hover { background-color: var(--hover-veil); color: #fff; text-decoration: none; }
 .appnav__link.is-active { color: #fff; background-color: rgba(255, 255, 255, .16); }
 
@@ -313,7 +311,6 @@ a:hover { color: var(--cobalt-dk); text-decoration: underline; text-underline-of
     cursor: pointer;
     transition: background-color .15s ease;
 }
-/* Mateix pas de contrast, sense hex fixat a mà */
 .notice__toggle:hover { background-image: linear-gradient(var(--hover-tint), var(--hover-tint)); }
 
 .notice__count {
@@ -394,8 +391,6 @@ table.table-x tbody td {
 table.table-x tbody tr:last-child td { border-bottom: none; }
 table.table-x tbody tr { transition: background-color .12s ease; }
 
-/* El vel es pinta damunt del color propi de la fila: normal, warn o expired.
-   Cap fila perd el seu color en fer hover i ja no calen !important. */
 table.table-x tbody tr:hover {
     background-image: linear-gradient(var(--hover-tint), var(--hover-tint));
 }
@@ -494,14 +489,7 @@ table.table-x tbody tr:hover {
 
 .counter { display: inline-flex; gap: 6px; align-items: center; }
 
-/* ============================================================
-   BOTONS
-   Un únic :hover per a totes les variants. Les variants només
-   declaren colors mitjançant tokens, mai regles :hover pròpies.
-   ============================================================ */
-
 .btn {
-    /* Estat base */
     --btn-bg: transparent;
     --btn-fg: var(--ink-2);
     --btn-bd: var(--line-2);
@@ -582,7 +570,6 @@ table.table-x tbody tr:hover {
     --btn-bg-active: var(--surface-active);
 }
 
-/* Fons translúcid: es veu igual sobre --surface, --surface-2 i --paper */
 .btn--quiet {
     --btn-bg: transparent;
     --btn-fg: var(--ink-3);
@@ -736,8 +723,6 @@ input[type="file"].form-control::file-selector-button:hover {
     .pagehead__actions { width: 100%; }
 }
 
-/* En pantalles tàctils no hi ha punter: el hover s'hi queda "enganxat"
-   després de tocar, així que el desactivem i deixem només :active. */
 @media (hover: none) {
     .btn:hover {
         background-color: var(--btn-bg);
