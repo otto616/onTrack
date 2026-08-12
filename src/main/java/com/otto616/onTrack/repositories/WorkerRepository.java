@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface WorkerRepository extends JpaRepository<Worker, Long> {
     List<Worker> findByProviderId(Long providerId);
+    List<Worker> findByNameContainingIgnoreCaseOrDniContainingIgnoreCase(String name, String dni);
 }

@@ -6,6 +6,8 @@ import com.otto616.onTrack.repositories.ChecklistDocumentRepository;
 import com.otto616.onTrack.repositories.DocumentVersionRepository;
 import com.otto616.onTrack.repositories.ProviderRepository;
 import com.otto616.onTrack.repositories.DocumentTypeRepository;
+import com.otto616.onTrack.repositories.WorkerRepository;
+import com.otto616.onTrack.repositories.MachineryRepository;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -23,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,12 +37,64 @@ public class ProviderController {
     private final ChecklistDocumentRepository checklistRepository;
     private final DocumentTypeRepository documentTypeRepository;
     private final DocumentVersionRepository documentVersionRepository;
+    private final WorkerRepository workerRepository;
+    private final MachineryRepository machineryRepository;
 
-    public ProviderController(ProviderRepository providerRepository, ChecklistDocumentRepository checklistRepository, DocumentTypeRepository documentTypeRepository, DocumentVersionRepository documentVersionRepository) {
+    public ProviderController(ProviderRepository providerRepository, ChecklistDocumentRepository checklistRepository, DocumentTypeRepository documentTypeRepository, DocumentVersionRepository documentVersionRepository, WorkerRepository workerRepository, MachineryRepository machineryRepository) {
         this.providerRepository = providerRepository;
         this.checklistRepository = checklistRepository;
         this.documentTypeRepository = documentTypeRepository;
         this.documentVersionRepository = documentVersionRepository;
+        this.workerRepository = workerRepository;
+        this.machineryRepository = machineryRepository;
+    }
+
+    public static class SearchResult {
+        public String type;
+        public String name;
+        public String detail;
+        public String url;
+    }
+
+    @GetMapping("/api/search")
+    @ResponseBody
+    public List<SearchResult> globalSearch(@RequestParam("q") String q) {
+        List<SearchResult> results = new ArrayList<>();
+        if (q == null || q.isBlank()) {
+            return results;
+        }
+
+        List<Provider> providers = providerRepository.findByNameContainingIgnoreCaseOrTaxIdContainingIgnoreCase(q, q);
+        for (Provider p : providers) {
+            SearchResult r = new SearchResult();
+            r.type = "Proveïdor";
+            r.name = p.getName();
+            r.detail = p.getTaxId();
+            r.url = "/provider/" + p.getId() + "/checklist";
+            results.add(r);
+        }
+
+        List<Worker> workers = workerRepository.findByNameContainingIgnoreCaseOrDniContainingIgnoreCase(q, q);
+        for (Worker w : workers) {
+            SearchResult r = new SearchResult();
+            r.type = "Treballador";
+            r.name = w.getName();
+            r.detail = w.getDni() + " (" + w.getProvider().getName() + ")";
+            r.url = "/provider/" + w.getProvider().getId() + "/workers/" + w.getId() + "/checklist";
+            results.add(r);
+        }
+
+        List<Machinery> machines = machineryRepository.findByNameContainingIgnoreCaseOrInternalCodeContainingIgnoreCaseOrSerialNumberContainingIgnoreCase(q, q, q);
+        for (Machinery m : machines) {
+            SearchResult r = new SearchResult();
+            r.type = "Maquinària";
+            r.name = m.getName();
+            r.detail = m.getInternalCode() + " / " + m.getSerialNumber() + " (" + m.getProvider().getName() + ")";
+            r.url = "/provider/" + m.getProvider().getId() + "/machinery/" + m.getId() + "/checklist";
+            results.add(r);
+        }
+
+        return results;
     }
 
     @GetMapping("/")

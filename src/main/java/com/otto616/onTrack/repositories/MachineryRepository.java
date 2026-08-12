@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface MachineryRepository extends JpaRepository<Machinery, Long> {
     List<Machinery> findByProviderId(Long providerId);
+    List<Machinery> findByNameContainingIgnoreCaseOrInternalCodeContainingIgnoreCaseOrSerialNumberContainingIgnoreCase(String name, String code, String serial);
 }

@@ -49,13 +49,16 @@
             <h2 class="pagehead__title">Proveïdors</h2>
         </div>
         <div class="pagehead__actions">
-            <form th:action="@{/}" method="get" class="search">
-                <input type="text" class="form-control" name="search"
-                       placeholder="Cerca per nom o CIF" th:value="${searchQuery}">
-                <button class="btn btn--line" type="submit">Cerca</button>
-                <a th:if="${searchQuery != null and !searchQuery.isEmpty()}" th:href="@{/}"
-                   class="btn btn--quiet search__clear">Neteja</a>
-            </form>
+
+            <!-- Integració amb la teva classe .search nida -->
+            <div class="search" style="position: relative;">
+                <input type="text" class="form-control" id="globalSearchInput" placeholder="Cerca global (nom, CIF, DNI...)" autocomplete="off" aria-label="Cerca global">
+                <button class="btn btn--line" type="button" style="pointer-events: none;">Cerca</button>
+
+                <ul id="searchResults" class="dropdown-menu" style="display: none; position: absolute; top: 100%; left: 0; right: 0; max-height: 350px; overflow-y: auto; z-index: 1000; margin-top: 4px; padding: 0;">
+                </ul>
+            </div>
+
             <a th:href="@{/catalog}" class="btn btn--line">Catàleg de documents</a>
             <a th:href="@{/provider/new}" class="btn btn--ink">+ Nou proveïdor</a>
         </div>
@@ -123,7 +126,7 @@
                     <td colspan="6">
                         <div class="empty">
                             <p class="empty__title">Cap proveïdor per mostrar</p>
-                            <p class="empty__text">Ajusta la cerca o dona d'alta la primera empresa.</p>
+                            <p class="empty__text">Dona d'alta la primera empresa.</p>
                             <a th:href="@{/provider/new}" class="btn btn--ink">+ Nou proveïdor</a>
                         </div>
                     </td>
@@ -143,5 +146,55 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('globalSearchInput');
+        const searchResults = document.getElementById('searchResults');
+
+        searchInput.addEventListener('input', function() {
+            const query = this.value.trim();
+
+            if (query.length < 2) {
+                searchResults.style.display = 'none';
+                return;
+            }
+
+            fetch('/api/search?q=' + encodeURIComponent(query))
+                .then(response => response.json())
+                .then(data => {
+                    searchResults.innerHTML = '';
+
+                    if (data.length === 0) {
+                        searchResults.innerHTML = '<li style="padding: 12px 16px; color: var(--ink-3);">Cap resultat trobat</li>';
+                    } else {
+                        data.forEach(item => {
+                            const li = document.createElement('li');
+                            li.style.borderBottom = '1px solid var(--line)';
+                            li.innerHTML = `
+                                <a class="dropdown-item" href="${item.url}" style="display: flex; flex-direction: column; padding: 10px 16px; text-decoration: none;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                        <span style="font-weight: 600; color: var(--ink);">${item.name}</span>
+                                        <span class="pill pill--neutral pill--plain" style="font-size: 11px;">${item.type}</span>
+                                    </div>
+                                    <span style="font-size: 12px; color: var(--ink-3);">${item.detail}</span>
+                                </a>
+                            `;
+                            searchResults.appendChild(li);
+                        });
+                    }
+                    searchResults.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error("Error a la cerca asíncrona:", error);
+                });
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.style.display = 'none';
+            }
+        });
+    });
+</script>
 </body>
 </html>
