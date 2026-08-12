@@ -26,14 +26,71 @@ public class DataLoader implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         if (documentTypeRepository.count() == 0) {
-            createDocumentType("Rebut Assegurança Responsabilitat Civil", Enums.DocumentCategory.COMPANY, Enums.ProviderType.SUBCONTRACTOR_INDUSTRIAL, true);
-            createDocumentType("Certificat Negatiu deutes Seguretat Social", Enums.DocumentCategory.COMPANY, Enums.ProviderType.FREELANCE_NO_WORKERS, false);
+
+            createDocumentType("Certificat Negatiu deutes Seguretat Social", Enums.DocumentCategory.COMPANY, Enums.ProviderType.FREELANCE_NO_WORKERS, true);
+            createDocumentType("Certificat Positiu d'Inexistència de Deutes", Enums.DocumentCategory.COMPANY, Enums.ProviderType.FREELANCE_NO_WORKERS, true);
+            createDocumentType("Certificat Hisenda Subcontractista", Enums.DocumentCategory.COMPANY, Enums.ProviderType.FREELANCE_NO_WORKERS, true);
+            createDocumentType("Fotocòpia de la pòlissa de Responsabilitat Civil", Enums.DocumentCategory.COMPANY, Enums.ProviderType.FREELANCE_NO_WORKERS, false);
+            createDocumentType("Rebut en vigor assegurança de Responsabilitat Civil", Enums.DocumentCategory.COMPANY, Enums.ProviderType.FREELANCE_NO_WORKERS, true);
+            createDocumentType("Rebut d'autònom actualitzat", Enums.DocumentCategory.COMPANY, Enums.ProviderType.FREELANCE_NO_WORKERS, true);
             createDocumentType("Inscripció mútua", Enums.DocumentCategory.COMPANY, Enums.ProviderType.FREELANCE_NO_WORKERS, false);
-            createDocumentType("TC1 i TC2 del mes anterior", Enums.DocumentCategory.WORKER, Enums.ProviderType.FREELANCE_WITH_WORKERS, true);
-            createDocumentType("Certificat aptitud mèdica", Enums.DocumentCategory.WORKER, Enums.ProviderType.SUBCONTRACTOR_INDUSTRIAL, true);
-            createDocumentType("ITV Maquinària", Enums.DocumentCategory.MACHINERY, Enums.ProviderType.SUBCONTRACTOR_INDUSTRIAL, true);
-            createDocumentType("REA", Enums.DocumentCategory.COMPANY, Enums.ProviderType.FREELANCE_WITH_WORKERS, true);
-            createDocumentType("Manual Màquina", Enums.DocumentCategory.MACHINERY, Enums.ProviderType.SUBCONTRACTOR_INDUSTRIAL, false);
+            createDocumentType("Acta d'Adhesió al Pla de Seguretat i Salut (DOC PRL 1)", Enums.DocumentCategory.COMPANY, Enums.ProviderType.FREELANCE_NO_WORKERS, false);
+
+            createDocumentType("Certificat Negatiu deutes Seguretat Social", Enums.DocumentCategory.COMPANY, Enums.ProviderType.FREELANCE_WITH_WORKERS, true);
+            createDocumentType("Certificat Positiu d'Inexistència de Deutes (AEAT)", Enums.DocumentCategory.COMPANY, Enums.ProviderType.FREELANCE_WITH_WORKERS, true);
+            createDocumentType("Certificat Hisenda Subcontractista", Enums.DocumentCategory.COMPANY, Enums.ProviderType.FREELANCE_WITH_WORKERS, true);
+            createDocumentType("Fotocòpia de la pòlissa de Responsabilitat Civil", Enums.DocumentCategory.COMPANY, Enums.ProviderType.FREELANCE_WITH_WORKERS, false);
+            createDocumentType("Rebut en vigor assegurança de Responsabilitat Civil", Enums.DocumentCategory.COMPANY, Enums.ProviderType.FREELANCE_WITH_WORKERS, true);
+            createDocumentType("Fotocòpia de la pòlissa d'Accidents de treball", Enums.DocumentCategory.COMPANY, Enums.ProviderType.FREELANCE_WITH_WORKERS, false);
+            createDocumentType("Rebut en vigor de l'assegurança d'accidents", Enums.DocumentCategory.COMPANY, Enums.ProviderType.FREELANCE_WITH_WORKERS, true);
+            createDocumentType("TC1 i TC2 (RLC i RNT) i rebut bancari", Enums.DocumentCategory.COMPANY, Enums.ProviderType.FREELANCE_WITH_WORKERS, true);
+            createDocumentType("REA (Certificat d'inscripció)", Enums.DocumentCategory.COMPANY, Enums.ProviderType.FREELANCE_WITH_WORKERS, true);
+            createDocumentType("Acta d'Adhesió al Pla de Seguretat i Salut (DOC PRL1 i PRL2)", Enums.DocumentCategory.COMPANY, Enums.ProviderType.FREELANCE_WITH_WORKERS, false);
+            createDocumentType("Adreça i telèfon de la Mútua de Treball", Enums.DocumentCategory.COMPANY, Enums.ProviderType.FREELANCE_WITH_WORKERS, false);
+            createDocumentType("Avaluació dels riscos laborals i procediments", Enums.DocumentCategory.COMPANY, Enums.ProviderType.FREELANCE_WITH_WORKERS, false);
+            createDocumentType("Certificat del Servei de Prevenció", Enums.DocumentCategory.COMPANY, Enums.ProviderType.FREELANCE_WITH_WORKERS, true);
+            createDocumentType("Rebut del contracte del Servei de Prevenció", Enums.DocumentCategory.COMPANY, Enums.ProviderType.FREELANCE_WITH_WORKERS, true);
+
+            createDocumentType("Certificat d'hisenda segons art. 43,1 f) LGT-modelo 01C", Enums.DocumentCategory.COMPANY, Enums.ProviderType.SUBCONTRACTOR_INDUSTRIAL, true);
+            createDocumentType("Certificat corrent pagament Tesoreria art.42 E.T.", Enums.DocumentCategory.COMPANY, Enums.ProviderType.SUBCONTRACTOR_INDUSTRIAL, true);
+            createDocumentType("Assegurança d'accidents (pòlissa)", Enums.DocumentCategory.COMPANY, Enums.ProviderType.SUBCONTRACTOR_INDUSTRIAL, false);
+            createDocumentType("Rebut en vigor assegurança accidents", Enums.DocumentCategory.COMPANY, Enums.ProviderType.SUBCONTRACTOR_INDUSTRIAL, true);
+            createDocumentType("Assegurança responsabilitat civil (pòlissa)", Enums.DocumentCategory.COMPANY, Enums.ProviderType.SUBCONTRACTOR_INDUSTRIAL, false);
+            createDocumentType("Rebut en vigor assegurança responsabilitat civil", Enums.DocumentCategory.COMPANY, Enums.ProviderType.SUBCONTRACTOR_INDUSTRIAL, true);
+            createDocumentType("Acreditació existència servei de prevenció", Enums.DocumentCategory.COMPANY, Enums.ProviderType.SUBCONTRACTOR_INDUSTRIAL, false);
+            createDocumentType("Rebut contracte de Prevenció", Enums.DocumentCategory.COMPANY, Enums.ProviderType.SUBCONTRACTOR_INDUSTRIAL, true);
+            createDocumentType("Nòmines signades / rebuts bancaris", Enums.DocumentCategory.COMPANY, Enums.ProviderType.SUBCONTRACTOR_INDUSTRIAL, true);
+            createDocumentType("ITA", Enums.DocumentCategory.COMPANY, Enums.ProviderType.SUBCONTRACTOR_INDUSTRIAL, false);
+            createDocumentType("TC1 TC2 i rebut bancari", Enums.DocumentCategory.COMPANY, Enums.ProviderType.SUBCONTRACTOR_INDUSTRIAL, true);
+            createDocumentType("Inscripció REA", Enums.DocumentCategory.COMPANY, Enums.ProviderType.SUBCONTRACTOR_INDUSTRIAL, true);
+            createDocumentType("Fotocòpia IAE i pagament", Enums.DocumentCategory.COMPANY, Enums.ProviderType.SUBCONTRACTOR_INDUSTRIAL, true);
+            createDocumentType("Avaluació riscos empresa", Enums.DocumentCategory.COMPANY, Enums.ProviderType.SUBCONTRACTOR_INDUSTRIAL, false);
+            createDocumentType("Mútua accidents (dades i centre assistencial)", Enums.DocumentCategory.COMPANY, Enums.ProviderType.SUBCONTRACTOR_INDUSTRIAL, false);
+            createDocumentType("Relació de treballadors a l'obra", Enums.DocumentCategory.COMPANY, Enums.ProviderType.SUBCONTRACTOR_INDUSTRIAL, false);
+            createDocumentType("Adhesió pla de seguretat i salut", Enums.DocumentCategory.COMPANY, Enums.ProviderType.SUBCONTRACTOR_INDUSTRIAL, false);
+            createDocumentType("Designació responsable (recurs preventiu)", Enums.DocumentCategory.COMPANY, Enums.ProviderType.SUBCONTRACTOR_INDUSTRIAL, false);
+
+            Enums.ProviderType[] withWorkers = {Enums.ProviderType.FREELANCE_WITH_WORKERS, Enums.ProviderType.SUBCONTRACTOR_INDUSTRIAL};
+            for (Enums.ProviderType type : withWorkers) {
+                createDocumentType("DNI / NIE / Carnet de conduir", Enums.DocumentCategory.WORKER, type, true);
+                createDocumentType("Alta a la Seguretat Social (TA-2)", Enums.DocumentCategory.WORKER, type, false);
+                createDocumentType("Certificat individual d'entrega d'EPIs", Enums.DocumentCategory.WORKER, type, false);
+                createDocumentType("Certificat formació PRL (20h / 60h+6h)", Enums.DocumentCategory.WORKER, type, false);
+                createDocumentType("Informació lloc de treball art. 18 i 19", Enums.DocumentCategory.WORKER, type, false);
+                createDocumentType("Còpia bàsica del contracte de treball", Enums.DocumentCategory.WORKER, type, false);
+                createDocumentType("Certificat d'aptitud mèdica", Enums.DocumentCategory.WORKER, type, true);
+                createDocumentType("Autoritzacions ús maquinària", Enums.DocumentCategory.WORKER, type, false);
+            }
+
+            for (Enums.ProviderType type : Enums.ProviderType.values()) {
+                createDocumentType("Rebut d'assegurança", Enums.DocumentCategory.MACHINERY, type, true);
+                createDocumentType("Fitxa tècnica", Enums.DocumentCategory.MACHINERY, type, false);
+                createDocumentType("Permís de circulació", Enums.DocumentCategory.MACHINERY, type, false);
+                createDocumentType("ITV", Enums.DocumentCategory.MACHINERY, type, true);
+                createDocumentType("Certificat CEE", Enums.DocumentCategory.MACHINERY, type, false);
+                createDocumentType("Manual d'instruccions", Enums.DocumentCategory.MACHINERY, type, false);
+                createDocumentType("Manteniment / Gestor de Residus", Enums.DocumentCategory.MACHINERY, type, true);
+            }
         }
 
         if (providerRepository.count() == 0) {
