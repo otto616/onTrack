@@ -50,7 +50,6 @@
         </div>
         <div class="pagehead__actions">
 
-            <!-- Integració amb la teva classe .search nida -->
             <div class="search" style="position: relative;">
                 <input type="text" class="form-control" id="globalSearchInput" placeholder="Cerca global (nom, CIF, DNI...)" autocomplete="off" aria-label="Cerca global">
                 <button class="btn btn--line" type="button" style="pointer-events: none;">Cerca</button>
@@ -172,9 +171,9 @@
                             li.style.borderBottom = '1px solid var(--line)';
                             li.innerHTML = `
                                 <a class="dropdown-item" href="${item.url}" style="display: flex; flex-direction: column; padding: 10px 16px; text-decoration: none;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                        <span style="font-weight: 600; color: var(--ink);">${item.name}</span>
-                                        <span class="pill pill--neutral pill--plain" style="font-size: 11px;">${item.type}</span>
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 4px;">
+                                        <span style="font-weight: 600; color: var(--ink); word-break: break-word;">${item.name}</span>
+                                        <span class="pill pill--neutral pill--plain" style="font-size: 11px; flex-shrink: 0;">${item.type}</span>
                                     </div>
                                     <span style="font-size: 12px; color: var(--ink-3);">${item.detail}</span>
                                 </a>
@@ -185,7 +184,7 @@
                     searchResults.style.display = 'block';
                 })
                 .catch(error => {
-                    console.error("Error a la cerca asíncrona:", error);
+                    console.error("Error", error);
                 });
         });
 
