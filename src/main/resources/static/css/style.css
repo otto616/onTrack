@@ -496,8 +496,16 @@ table.table-x tbody tr:hover { background: var(--surface-2); }
 .btn:hover { text-decoration: none; }
 .btn:active { transform: translateY(1px); }
 
-.btn--ink { --btn-bg: var(--ink); --btn-fg: #fff; --btn-bd: var(--ink); }
-.btn--ink:hover { --btn-bg: #1C2E4D; --btn-bd: #1C2E4D; color: #fff; }
+.btn--ink {
+    background-color: var(--ink);
+    color: #FFFFFF;
+    border-color: var(--ink);
+}
+.btn--ink:hover {
+    background-color: var(--ink-2);
+    border-color: var(--ink-2);
+    color: #FFFFFF;
+}
 
 .btn--line { --btn-bg: var(--surface); --btn-fg: var(--ink-2); --btn-bd: var(--line-2); }
 .btn--line:hover { --btn-bg: var(--surface-2); --btn-bd: var(--ink-4); color: var(--ink); }
