@@ -108,7 +108,7 @@
                                 <li>
                                     <a class="dropdown-item" th:href="@{/provider/{id}/checklist(id=${provider.id})}">📄 Documentació general</a>
                                 </li>
-                                <li>
+                                <li th:if="${provider.providerType.name() != 'FREELANCE_NO_WORKERS'}">
                                     <a class="dropdown-item" th:href="@{/provider/{id}/workers(id=${provider.id})}">👷 Treballadors</a>
                                 </li>
                                 <li>

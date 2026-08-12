@@ -45,21 +45,16 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="machinery : ${machineries}" class="row-spine"
-                    th:onclick="|window.location.href='@{/provider/{pid}/machinery/{mid}/checklist(pid=${provider.id}, mid=${machinery.id})}'|"
-                    style="cursor: pointer;">
-
+                <tr th:each="machinery : ${machineries}" class="row-spine">
                     <td class="cell-name" th:text="${machinery.name}">—</td>
                     <td class="cell-mono" th:text="${machinery.internalCode}">—</td>
                     <td class="cell-mono" th:text="${machinery.serialNumber}">—</td>
                     <td class="t-right">
-                        <a th:href="@{/provider/{pid}/machinery/{mid}/edit(pid=${provider.id}, mid=${machinery.id})}"
-                           class="btn btn--line btn--sm"
-                           onclick="event.stopPropagation();">Edita</a>
-
-                        <a th:href="@{/provider/{pid}/machinery/{mid}/delete(pid=${provider.id}, mid=${machinery.id})}"
-                           class="btn btn--quiet btn--sm"
-                           onclick="event.stopPropagation(); return confirm('Segur que vols eliminar aquesta màquina?');">Esborra</a>
+                        <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                            <a th:href="@{/provider/{pid}/machinery/{mid}/checklist(pid=${provider.id}, mid=${machinery.id})}" class="btn btn--ink btn--sm">Documentació</a>
+                            <a th:href="@{/provider/{pid}/machinery/{mid}/edit(pid=${provider.id}, mid=${machinery.id})}" class="btn btn--line btn--sm">Edita</a>
+                            <a th:href="@{/provider/{pid}/machinery/{mid}/delete(pid=${provider.id}, mid=${machinery.id})}" class="btn btn--quiet btn--sm" onclick="return confirm('Segur que vols eliminar aquesta màquina?');">Esborra</a>
+                        </div>
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(machineries)}">

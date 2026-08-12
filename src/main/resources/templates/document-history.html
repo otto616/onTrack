@@ -38,15 +38,15 @@
         <div>
             <span class="eyebrow" th:text="${document.provider.name}">Proveïdor</span>
             <h1 class="pagehead__title" th:text="${document.documentType.name}">Document</h1>
-            <p class="pagehead__sub">Històric de versions i control d'arxius.</p>
+            <p class="pagehead__sub">Històric de versions i control d'estat.</p>
         </div>
     </div>
 
     <div class="panel panel--gap" style="margin-bottom: 32px;">
         <div class="panel__head">
             <div>
-                <span class="eyebrow">Nova versió</span>
-                <div class="panel__title">Afegeix una nova versió a l'històric</div>
+                <span class="eyebrow">Edició i noves versions</span>
+                <div class="panel__title">Actualitza l'estat o puja un nou arxiu</div>
             </div>
         </div>
 
@@ -54,18 +54,26 @@
             <div class="formgrid">
 
                 <div class="fg-5">
-                    <label class="field__label">Selecciona l'arxiu</label>
-                    <input type="file" name="file" class="form-control" accept=".pdf,.png,.jpg,.jpeg" required>
+                    <label class="field__label">Selecciona l'arxiu (opcional)</label>
+                    <input type="file" name="file" class="form-control" accept=".pdf,.png,.jpg,.jpeg">
                 </div>
 
-                <div class="fg-4" th:if="${document.documentType.expires}">
+                <div class="fg-3" th:if="${document.documentType.expires}">
                     <label class="field__label">Data de caducitat</label>
-                    <input type="date" name="expirationDate" class="form-control" required>
+                    <input type="date" name="expirationDate" class="form-control" th:value="${document.expirationDate}">
                 </div>
 
-                <div th:class="${document.documentType.expires ? 'fg-3' : 'fg-7'}">
+                <div th:class="${document.documentType.expires ? 'fg-2 field--check' : 'fg-4 field--check'}">
+                    <span class="field__label field__label--ghost" aria-hidden="true"></span>
+                    <label class="check-inline">
+                        <input class="form-check-input" type="checkbox" name="received" th:checked="${document.received}">
+                        <span>Document validat</span>
+                    </label>
+                </div>
+
+                <div th:class="${document.documentType.expires ? 'fg-2' : 'fg-3'}">
                     <label class="field__label field__label--ghost" aria-hidden="true"></label>
-                    <button type="submit" class="btn btn--ink" style="width: 100%;">Puja la versió</button>
+                    <button type="submit" class="btn btn--ink" style="width: 100%;">Desa</button>
                 </div>
 
             </div>

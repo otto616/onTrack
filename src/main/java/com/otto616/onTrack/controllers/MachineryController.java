@@ -49,8 +49,22 @@ public class MachineryController {
 
     @PostMapping("/new")
     public String saveMachinery(@PathVariable Long providerId, @ModelAttribute Machinery machinery) {
-        machinery.setProvider(providerRepository.findById(providerId).orElseThrow());
+        Provider provider = providerRepository.findById(providerId).orElseThrow();
+        machinery.setProvider(provider);
         machineryRepository.save(machinery);
+
+        List<DocumentType> requiredDocs = documentTypeRepository.findByProviderType(provider.getProviderType())
+                .stream().filter(d -> d.getCategory() == Enums.DocumentCategory.MACHINERY).toList();
+
+        for (DocumentType docType : requiredDocs) {
+            ChecklistDocument chk = new ChecklistDocument();
+            chk.setProvider(provider);
+            chk.setMachinery(machinery);
+            chk.setDocumentType(docType);
+            chk.setReceived(false);
+            checklistRepository.save(chk);
+        }
+
         return "redirect:/provider/" + providerId + "/machinery";
     }
 

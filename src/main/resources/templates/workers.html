@@ -46,22 +46,17 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="worker : ${workers}" class="row-spine"
-                    th:onclick="|window.location.href='@{/provider/{pid}/workers/{wid}/checklist(pid=${provider.id}, wid=${worker.id})}'|"
-                    style="cursor: pointer;">
-
+                <tr th:each="worker : ${workers}" class="row-spine">
                     <td class="cell-name" th:text="${worker.name}">—</td>
                     <td class="cell-mono" th:text="${worker.dni}">—</td>
                     <td th:text="${worker.phone}">—</td>
                     <td class="cell-mono" th:text="${worker.socialSecurity}">—</td>
                     <td class="t-right">
-                        <a th:href="@{/provider/{pid}/workers/{wid}/edit(pid=${provider.id}, wid=${worker.id})}"
-                           class="btn btn--line btn--sm"
-                           onclick="event.stopPropagation();">Edita</a>
-
-                        <a th:href="@{/provider/{pid}/workers/{wid}/delete(pid=${provider.id}, wid=${worker.id})}"
-                           class="btn btn--quiet btn--sm"
-                           onclick="event.stopPropagation(); return confirm('Segur que vols eliminar aquest treballador?');">Esborra</a>
+                        <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                            <a th:href="@{/provider/{pid}/workers/{wid}/checklist(pid=${provider.id}, wid=${worker.id})}" class="btn btn--ink btn--sm">Documentació</a>
+                            <a th:href="@{/provider/{pid}/workers/{wid}/edit(pid=${provider.id}, wid=${worker.id})}" class="btn btn--line btn--sm">Edita</a>
+                            <a th:href="@{/provider/{pid}/workers/{wid}/delete(pid=${provider.id}, wid=${worker.id})}" class="btn btn--quiet btn--sm" onclick="return confirm('Segur que vols eliminar aquest treballador?');">Esborra</a>
+                        </div>
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(workers)}">

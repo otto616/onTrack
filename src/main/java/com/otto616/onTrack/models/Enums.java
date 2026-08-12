@@ -4,7 +4,7 @@ public class Enums {
 
     public enum ProviderType {
         FREELANCE_NO_WORKERS("Autònom Sense Treballadors"),
-        FREELANCE_WITH_WORKERS("Empresa o Autònom Amb Trebalaldors"),
+        FREELANCE_WITH_WORKERS("Empresa o Autònom Amb Treballadors"),
         SUBCONTRACTOR_INDUSTRIAL("Subcontractor / Industrial");
 
         private final String description;

@@ -49,8 +49,22 @@ public class WorkerController {
 
     @PostMapping("/new")
     public String saveWorker(@PathVariable Long providerId, @ModelAttribute Worker worker) {
-        worker.setProvider(providerRepository.findById(providerId).orElseThrow());
+        Provider provider = providerRepository.findById(providerId).orElseThrow();
+        worker.setProvider(provider);
         workerRepository.save(worker);
+
+        List<DocumentType> requiredDocs = documentTypeRepository.findByProviderType(provider.getProviderType())
+                .stream().filter(d -> d.getCategory() == Enums.DocumentCategory.WORKER).toList();
+
+        for (DocumentType docType : requiredDocs) {
+            ChecklistDocument chk = new ChecklistDocument();
+            chk.setProvider(provider);
+            chk.setWorker(worker);
+            chk.setDocumentType(docType);
+            chk.setReceived(false);
+            checklistRepository.save(chk);
+        }
+
         return "redirect:/provider/" + providerId + "/workers";
     }
 
