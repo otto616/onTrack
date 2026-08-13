@@ -36,7 +36,7 @@
     <div class="pagehead">
         <div>
             <span class="eyebrow" th:text="${project.id == null ? 'Nova Obra' : 'Modificació'}"></span>
-            <h1 class="pagehead__title" th:text="${project.id == null ? 'Crea una Obra' : 'Canvia el nom de l\'Obra'}"></h1>
+            <h1 class="pagehead__title" th:text="${project.id == null ? 'Crea una Obra' : 'Canvia el nom de l''Obra'}"></h1>
             <p class="pagehead__sub">Si canvies el nom, aquest s'actualitzarà a tots els llocs on l'obra estigui assignada.</p>
         </div>
     </div>
@@ -56,7 +56,7 @@
 
             <div class="form-actions">
                 <a th:href="@{/projects/catalog}" class="btn btn--quiet">Cancel·la</a>
-                <button type="submit" class="btn btn--ink" th:text="${project.id == null ? 'Registra l\'Obra' : 'Desa els canvis'}"></button>
+                <button type="submit" class="btn btn--ink" th:text="${project.id == null ? 'Registra l''Obra' : 'Desa els canvis'}"></button>
             </div>
 
         </form>
