@@ -70,6 +70,21 @@ public class ChecklistDocument {
     public List<DocumentVersion> getVersions() { return versions; }
     public void setVersions(List<DocumentVersion> versions) { this.versions = versions; }
 
+    public void updateExpirationDateFromVersions() {
+        if (this.versions == null || this.versions.isEmpty()) {
+            return;
+        }
+        LocalDate maxDate = null;
+        for (DocumentVersion v : this.versions) {
+            if (v.getExpirationDate() != null) {
+                if (maxDate == null || v.getExpirationDate().isAfter(maxDate)) {
+                    maxDate = v.getExpirationDate();
+                }
+            }
+        }
+        this.expirationDate = maxDate;
+    }
+
     public String getStatus() {
         if (exempt) {
             return "EXEMPT";

@@ -27,12 +27,12 @@
             </span>
         </a>
         <nav class="appnav">
-            <a th:href="@{/}" class="appnav__link is-active">Proveïdors</a>
+            <a th:href="@{/}" class="appnav__link">Proveïdors</a>
+            <a th:href="@{/projects}" class="appnav__link">Obres</a>
             <a th:href="@{/catalog}" class="appnav__link">Catàleg</a>
         </nav>
     </div>
 </header>
-
 <main class="shell">
 
     <div class="pagehead">
@@ -58,6 +58,7 @@
                 </ul>
             </div>
 
+            <a th:href="@{/providers/trash}" class="btn btn--line" style="color: var(--ink-3);">Paperera</a>
             <a th:href="@{/catalog}" class="btn btn--line">Catàleg de documents</a>
             <a th:href="@{/provider/new}" class="btn btn--ink">+ Nou proveïdor</a>
         </div>
@@ -80,11 +81,11 @@
                 <tr th:each="provider : ${providers}" class="row-spine"
                     th:classappend="${expiredMap.get(provider.id) > 0 ? 'row--expired' : (pendingMap.get(provider.id) > 0 ? '' : 'row--ok')}">
 
-                    <td class="cell-id" th:text="${provider.id}">0</td>
-                    <td class="cell-name" th:text="${provider.name}">Empresa</td>
-                    <td class="cell-mono" th:text="${provider.taxId}">—</td>
+                    <td class="cell-id" th:text="${provider.id}"></td>
+                    <td class="cell-name" th:text="${provider.name}"></td>
+                    <td class="cell-mono" th:text="${provider.taxId}"></td>
 
-                    <td th:text="${provider.providerType.description}">—</td>
+                    <td th:text="${provider.providerType.description}"></td>
 
                     <td class="t-center">
                         <span class="counter">
@@ -92,11 +93,11 @@
                                   class="pill pill--ok">Tot en ordre</span>
                             <span th:if="${pendingMap.get(provider.id) > 0}" class="pill pill--warn"
                                   title="Documents pendents de rebre">
-                                <span th:text="${pendingMap.get(provider.id)}">0</span> pendents
+                                <span th:text="${pendingMap.get(provider.id)}"></span> pendents
                             </span>
                             <span th:if="${expiredMap.get(provider.id) > 0}" class="pill pill--danger"
                                   title="Documents caducats">
-                                <span th:text="${expiredMap.get(provider.id)}">0</span> caducats
+                                <span th:text="${expiredMap.get(provider.id)}"></span> caducats
                             </span>
                         </span>
                     </td>
@@ -110,11 +111,21 @@
                                 <li>
                                     <a class="dropdown-item" th:href="@{/provider/{id}/checklist(id=${provider.id})}">📄 Documentació general</a>
                                 </li>
+                                <li>
+                                    <a class="dropdown-item" th:href="@{/provider/{id}/projects(id=${provider.id})}">🏢 Històric d'obres</a>
+                                </li>
                                 <li th:if="${provider.providerType.name() != 'FREELANCE_NO_WORKERS'}">
                                     <a class="dropdown-item" th:href="@{/provider/{id}/workers(id=${provider.id})}">👷 Treballadors</a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item" th:href="@{/provider/{id}/machinery(id=${provider.id})}">🚜 Maquinària</a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" th:href="@{/provider/{id}/edit(id=${provider.id})}">✏️ Edita l'empresa</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" th:href="@{/provider/{id}/delete(id=${provider.id})}" onclick="return confirm('Segur que vols esborrar aquest proveïdor? Anirà a la paperera.');" style="color: var(--danger);">🗑️ Esborra</a>
                                 </li>
                             </ul>
                         </div>

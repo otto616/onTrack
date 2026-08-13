@@ -13,10 +13,14 @@
     <div class="appbar__inner">
         <a class="brand" th:href="@{/}">
             <span class="brand__mark">GV</span>
-            <span class="brand__text"><strong>Gestor</strong><span>Documental</span></span>
+            <span class="brand__text">
+                <strong>Gestor</strong>
+                <span>Documental</span>
+            </span>
         </a>
         <nav class="appnav">
-            <a th:href="@{/}" class="appnav__link is-active">Proveïdors</a>
+            <a th:href="@{/}" class="appnav__link">Proveïdors</a>
+            <a th:href="@{/projects}" class="appnav__link">Obres</a>
             <a th:href="@{/catalog}" class="appnav__link">Catàleg</a>
         </nav>
     </div>
@@ -52,6 +56,7 @@
                     <td class="t-right">
                         <div style="display: flex; gap: 8px; justify-content: flex-end;">
                             <a th:href="@{/provider/{pid}/machinery/{mid}/checklist(pid=${provider.id}, mid=${machinery.id})}" class="btn btn--ink btn--sm">Documentació</a>
+                            <a th:href="@{/provider/{pid}/machinery/{mid}/projects(pid=${provider.id}, mid=${machinery.id})}" class="btn btn--line btn--sm">🏢 Obres</a>
                             <a th:href="@{/provider/{pid}/machinery/{mid}/edit(pid=${provider.id}, mid=${machinery.id})}" class="btn btn--line btn--sm">Edita</a>
                             <a th:href="@{/provider/{pid}/machinery/{mid}/delete(pid=${provider.id}, mid=${machinery.id})}" class="btn btn--quiet btn--sm" onclick="return confirm('Segur que vols eliminar aquesta màquina?');">Esborra</a>
                         </div>

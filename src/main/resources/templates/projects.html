@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Històric d'Obres · Gestor Documental</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .dropdown-menu { border-color: var(--line); border-radius: var(--r-md); box-shadow: var(--shadow-2); font-size: 14px; }
+        .dropdown-item { padding: 8px 16px; color: var(--ink-2); font-weight: 500; }
+        .dropdown-item:hover { background-color: var(--surface-2); color: var(--ink); }
+    </style>
+</head>
+<body>
+
+<header class="appbar">
+    <div class="appbar__inner">
+        <a class="brand" th:href="@{/}">
+            <span class="brand__mark">GV</span>
+            <span class="brand__text">
+                <strong>Gestor</strong>
+                <span>Documental</span>
+            </span>
+        </a>
+        <nav class="appnav">
+            <a th:href="@{/}" class="appnav__link">Proveïdors</a>
+            <a th:href="@{/projects}" class="appnav__link is-active">Obres</a>
+            <a th:href="@{/catalog}" class="appnav__link">Catàleg</a>
+        </nav>
+    </div>
+</header>
+
+<main class="shell">
+
+    <div class="pagehead">
+        <div>
+            <span class="eyebrow">Registre global</span>
+            <h1 class="pagehead__title">Històric d'Obres</h1>
+            <p class="pagehead__sub">Totes les assignacions de treballadors i màquines ordenades cronològicament.</p>
+        </div>
+        <div class="pagehead__actions">
+
+            <div class="search" style="position: relative;">
+                <input type="text" class="form-control" id="globalProjectSearch" placeholder="Cerca assignació..." autocomplete="off" aria-label="Cerca assignació">
+                <button class="btn btn--line" type="button" style="pointer-events: none;">Cerca</button>
+                <ul id="searchResults" class="dropdown-menu" style="display: none; position: absolute; top: 100%; left: 0; right: 0; max-height: 350px; overflow-y: auto; z-index: 1000; margin-top: 4px; padding: 0;"></ul>
+            </div>
+
+            <a th:href="@{/projects/catalog}" class="btn btn--ink">Administració d'Obres</a>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <div class="table-scroll">
+            <table class="table-x">
+                <thead>
+                <tr>
+                    <th>Obra</th>
+                    <th>Recurs Assignat</th>
+                    <th>Empresa Propietària</th>
+                    <th>Data d'inici</th>
+                    <th>Data de fi</th>
+                    <th class="t-right">Accions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="assignment : ${assignments}" class="row-spine">
+                    <td class="cell-name" th:text="${assignment.project.name}"></td>
+                    <td>
+                        <span th:if="${assignment.worker != null}">
+                            <span class="pill pill--neutral pill--plain" style="margin-right: 6px;">👷 Treballador</span>
+                            <span th:text="${assignment.worker.name}" style="font-weight: 500;"></span>
+                        </span>
+                        <span th:if="${assignment.machinery != null}">
+                            <span class="pill pill--neutral pill--plain" style="margin-right: 6px;">🚜 Màquina</span>
+                            <span th:text="${assignment.machinery.name}" style="font-weight: 500;"></span>
+                        </span>
+                        <span th:if="${assignment.worker == null and assignment.machinery == null}">
+                            <span class="pill pill--cobalt pill--plain" style="margin-right: 6px; background: var(--cobalt-bg); color: var(--cobalt);">🏢 General</span>
+                            <span th:text="${assignment.provider.name}" style="font-weight: 500;"></span>
+                        </span>
+                    </td>
+                    <td th:text="${assignment.provider.name}"></td>
+                    <td th:text="${#temporals.format(assignment.startDate, 'dd/MM/yyyy')}"></td>
+                    <td>
+                        <span th:if="${assignment.endDate != null}" th:text="${#temporals.format(assignment.endDate, 'dd/MM/yyyy')}"></span>
+                        <span th:if="${assignment.endDate == null}" class="cell-sub" style="color: var(--ok); font-weight: 700;">En curs</span>
+                    </td>
+                    <td class="t-right">
+                        <a th:href="@{/projects/assignment/{id}/delete(id=${assignment.id})}" class="btn btn--quiet btn--sm" onclick="return confirm('Esborrar aquesta assignació?');">Esborra</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(assignments)}">
+                    <td colspan="6">
+                        <div class="empty">
+                            <p class="empty__title">Cap registre trobat</p>
+                            <p class="empty__text">No hi ha cap assignació que coincideixi amb la cerca.</p>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer class="sitefoot">
+    <div class="sitefoot__inner">
+        <span>Gestor documental intern</span>
+    </div>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('globalProjectSearch');
+        const searchResults = document.getElementById('searchResults');
+
+        searchInput.addEventListener('input', function() {
+            const query = this.value.trim();
+
+            if (query.length < 2) {
+                searchResults.style.display = 'none';
+                return;
+            }
+
+            fetch('/api/projects/search?q=' + encodeURIComponent(query))
+                .then(response => response.json())
+                .then(data => {
+                    searchResults.innerHTML = '';
+
+                    if (data.length === 0) {
+                        searchResults.innerHTML = '<li style="padding: 12px 16px; color: var(--ink-3);">Cap assignació trobada</li>';
+                    } else {
+                        data.forEach(item => {
+                            const li = document.createElement('li');
+                            li.style.borderBottom = '1px solid var(--line)';
+                            li.innerHTML = `
+                                <a class="dropdown-item" href="${item.url}" style="display: flex; flex-direction: column; padding: 10px 16px; text-decoration: none;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 4px;">
+                                        <span style="font-weight: 600; color: var(--ink); word-break: break-word;">${item.name}</span>
+                                    </div>
+                                    <span style="font-size: 12px; color: var(--ink-3);">${item.detail}</span>
+                                </a>
+                            `;
+                            searchResults.appendChild(li);
+                        });
+                    }
+                    searchResults.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error("Error", error);
+                });
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

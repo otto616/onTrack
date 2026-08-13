@@ -17,6 +17,9 @@ public class Provider {
     @Enumerated(EnumType.STRING)
     private Enums.ProviderType providerType;
 
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private boolean isActive = true;
+
     public Provider() {}
 
     public Long getId() { return id; }
@@ -30,4 +33,7 @@ public class Provider {
 
     public Enums.ProviderType getProviderType() { return providerType; }
     public void setProviderType(Enums.ProviderType providerType) { this.providerType = providerType; }
+
+    public boolean isActive() { return isActive; }
+    public void setActive(boolean active) { isActive = active; }
 }

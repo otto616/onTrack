@@ -1,19 +1,14 @@
 package com.otto616.onTrack.controllers;
 
 import com.otto616.onTrack.dto.ChecklistForm;
-import com.otto616.onTrack.models.ChecklistDocument;
-import com.otto616.onTrack.models.DocumentType;
-import com.otto616.onTrack.models.Enums;
-import com.otto616.onTrack.models.Provider;
-import com.otto616.onTrack.models.Worker;
-import com.otto616.onTrack.repositories.ChecklistDocumentRepository;
-import com.otto616.onTrack.repositories.DocumentTypeRepository;
-import com.otto616.onTrack.repositories.ProviderRepository;
-import com.otto616.onTrack.repositories.WorkerRepository;
+import com.otto616.onTrack.models.*;
+import com.otto616.onTrack.repositories.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -24,12 +19,16 @@ public class WorkerController {
     private final ProviderRepository providerRepository;
     private final ChecklistDocumentRepository checklistRepository;
     private final DocumentTypeRepository documentTypeRepository;
+    private final ProjectRepository projectRepository;
+    private final ProjectAssignmentRepository projectAssignmentRepository;
 
-    public WorkerController(WorkerRepository workerRepository, ProviderRepository providerRepository, ChecklistDocumentRepository checklistRepository, DocumentTypeRepository documentTypeRepository) {
+    public WorkerController(WorkerRepository workerRepository, ProviderRepository providerRepository, ChecklistDocumentRepository checklistRepository, DocumentTypeRepository documentTypeRepository, ProjectRepository projectRepository, ProjectAssignmentRepository projectAssignmentRepository) {
         this.workerRepository = workerRepository;
         this.providerRepository = providerRepository;
         this.checklistRepository = checklistRepository;
         this.documentTypeRepository = documentTypeRepository;
+        this.projectRepository = projectRepository;
+        this.projectAssignmentRepository = projectAssignmentRepository;
     }
 
     @GetMapping
@@ -88,6 +87,10 @@ public class WorkerController {
 
     @GetMapping("/{workerId}/delete")
     public String deleteWorker(@PathVariable Long providerId, @PathVariable Long workerId) {
+        List<ProjectAssignment> assignments = projectAssignmentRepository.findByWorkerIdOrderByStartDateDesc(workerId);
+        projectAssignmentRepository.deleteAll(assignments);
+        List<ChecklistDocument> docs = checklistRepository.findByWorkerId(workerId);
+        checklistRepository.deleteAll(docs);
         workerRepository.deleteById(workerId);
         return "redirect:/provider/" + providerId + "/workers";
     }
@@ -131,5 +134,47 @@ public class WorkerController {
             checklistRepository.save(existingDoc);
         }
         return "redirect:/provider/" + providerId + "/workers/" + workerId + "/checklist";
+    }
+
+    @GetMapping("/{workerId}/projects")
+    public String viewWorkerProjects(@PathVariable Long providerId, @PathVariable Long workerId, Model model) {
+        Provider provider = providerRepository.findById(providerId).orElseThrow();
+        Worker worker = workerRepository.findById(workerId).orElseThrow();
+        List<ProjectAssignment> assignments = projectAssignmentRepository.findByWorkerIdOrderByStartDateDesc(workerId);
+
+        model.addAttribute("provider", provider);
+        model.addAttribute("worker", worker);
+        model.addAttribute("assignments", assignments);
+        return "worker-projects";
+    }
+
+    @PostMapping("/{workerId}/projects/new")
+    public String assignProject(@PathVariable Long providerId, @PathVariable Long workerId,
+                                @RequestParam("projectName") String projectName,
+                                @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+                                @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
+        Worker worker = workerRepository.findById(workerId).orElseThrow();
+
+        Project project = projectRepository.findByNameIgnoreCase(projectName).orElseGet(() -> {
+            Project p = new Project();
+            p.setName(projectName);
+            return projectRepository.save(p);
+        });
+
+        ProjectAssignment assignment = new ProjectAssignment();
+        assignment.setWorker(worker);
+        assignment.setProvider(worker.getProvider());
+        assignment.setProject(project);
+        assignment.setStartDate(startDate);
+        assignment.setEndDate(endDate);
+        projectAssignmentRepository.save(assignment);
+
+        return "redirect:/provider/" + providerId + "/workers/" + workerId + "/projects";
+    }
+
+    @GetMapping("/{workerId}/projects/{assignmentId}/delete")
+    public String deleteProjectAssignment(@PathVariable Long providerId, @PathVariable Long workerId, @PathVariable Long assignmentId) {
+        projectAssignmentRepository.deleteById(assignmentId);
+        return "redirect:/provider/" + providerId + "/workers/" + workerId + "/projects";
     }
 }

@@ -11,7 +11,18 @@
 <body>
 <header class="appbar">
     <div class="appbar__inner">
-        <a class="brand" th:href="@{/}"><span class="brand__mark">GV</span><span class="brand__text"><strong>Gestor</strong><span>Documental</span></span></a>
+        <a class="brand" th:href="@{/}">
+            <span class="brand__mark">GV</span>
+            <span class="brand__text">
+                <strong>Gestor</strong>
+                <span>Documental</span>
+            </span>
+        </a>
+        <nav class="appnav">
+            <a th:href="@{/}" class="appnav__link">Proveïdors</a>
+            <a th:href="@{/projects}" class="appnav__link">Obres</a>
+            <a th:href="@{/catalog}" class="appnav__link">Catàleg</a>
+        </nav>
     </div>
 </header>
 <main class="shell">

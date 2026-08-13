@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface ProviderRepository extends JpaRepository<Provider, Long> {
     List<Provider> findByNameContainingIgnoreCaseOrTaxIdContainingIgnoreCase(String name, String taxId);
+    List<Provider> findByIsActiveTrue();
+    List<Provider> findByIsActiveFalse();
 }

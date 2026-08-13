@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Nou proveïdor · Gestor Documental</title>
+  <title>Gestió de proveïdor · Gestor Documental</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
@@ -17,12 +17,13 @@
     <a class="brand" th:href="@{/}">
       <span class="brand__mark">GV</span>
       <span class="brand__text">
-        <strong>Gestor</strong>
-        <span>Documental</span>
-      </span>
+                <strong>Gestor</strong>
+                <span>Documental</span>
+            </span>
     </a>
     <nav class="appnav">
-      <a th:href="@{/}" class="appnav__link is-active">Proveïdors</a>
+      <a th:href="@{/}" class="appnav__link">Proveïdors</a>
+      <a th:href="@{/projects}" class="appnav__link">Obres</a>
       <a th:href="@{/catalog}" class="appnav__link">Catàleg</a>
     </nav>
   </div>
@@ -34,9 +35,9 @@
 
   <div class="pagehead">
     <div>
-      <span class="eyebrow">Alta</span>
-      <h1 class="pagehead__title">Nou proveïdor</h1>
-      <p class="pagehead__sub">En crear-lo, s'hi assignarà la documentació que li correspon segons la tipologia.</p>
+      <span class="eyebrow" th:text="${provider.id == null ? 'Alta' : 'Edicio'}"></span>
+      <h1 class="pagehead__title" th:text="${provider.id == null ? 'Nou proveïdor' : 'Edita proveïdor'}"></h1>
+      <p class="pagehead__sub" th:text="${provider.id == null ? 'En crear el registre, es generara la documentacio segons la tipologia.' : 'Modifica les dades basiques de la teva empresa.'}"></p>
     </div>
   </div>
 
@@ -46,8 +47,7 @@
       <span class="panel__note">Tots els camps són obligatoris</span>
     </div>
 
-    <!--/*@thymesVar id="provider" type="com.otto616.onTrack.models.Provider"*/-->
-    <form th:action="@{/provider/new}" th:object="${provider}" method="post" class="panel__body">
+    <form th:action="${provider.id == null ? '/provider/new' : '/provider/' + provider.id + '/edit'}" th:object="${provider}" method="post" class="panel__body">
 
       <div class="field">
         <label class="field__label" for="providerName">Nom de l'empresa</label>
@@ -75,7 +75,7 @@
 
       <div class="form-actions">
         <a th:href="@{/}" class="btn btn--quiet">Cancel·la</a>
-        <button type="submit" class="btn btn--ink">Crea el proveïdor</button>
+        <button type="submit" class="btn btn--ink" th:text="${provider.id == null ? 'Crea el proveïdor' : 'Desa els canvis'}"></button>
       </div>
 
     </form>

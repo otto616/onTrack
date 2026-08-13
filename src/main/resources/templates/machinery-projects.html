@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Obres Maquinària · Gestor Documental</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .dropdown-menu { border-color: var(--line); border-radius: var(--r-md); box-shadow: var(--shadow-2); font-size: 14px; background: var(--surface); }
+        .dropdown-item { padding: 8px 16px; color: var(--ink-2); font-weight: 500; }
+        .dropdown-item:hover { background-color: var(--surface-2); color: var(--ink); }
+        .panel--overflow { overflow: visible; position: relative; z-index: 20; }
+        .panel--overflow .panel__head { border-radius: var(--r-lg) var(--r-lg) 0 0; }
+    </style>
+</head>
+<body>
+
+<header class="appbar">
+    <div class="appbar__inner">
+        <a class="brand" th:href="@{/}">
+            <span class="brand__mark">GV</span>
+            <span class="brand__text"><strong>Gestor</strong><span>Documental</span></span>
+        </a>
+        <nav class="appnav">
+            <a th:href="@{/}" class="appnav__link">Proveïdors</a>
+            <a th:href="@{/projects}" class="appnav__link">Obres</a>
+            <a th:href="@{/catalog}" class="appnav__link">Catàleg</a>
+        </nav>
+    </div>
+</header>
+
+<main class="shell">
+    <a th:href="@{/provider/{id}/machinery(id=${provider.id})}" class="backlink">&larr; Torna a la maquinària</a>
+
+    <div class="pagehead">
+        <div>
+            <span class="eyebrow" th:text="${provider.name}">Empresa</span>
+            <h1 class="pagehead__title" th:text="${machinery.name}">Nom</h1>
+            <p class="pagehead__sub">Codi intern: <span th:text="${machinery.internalCode}"></span></p>
+        </div>
+    </div>
+
+    <div class="panel panel--gap panel--overflow" style="margin-bottom: 32px;">
+        <div class="panel__head">
+            <div class="panel__title">Afegeix una nova obra</div>
+        </div>
+        <form th:action="@{/provider/{pid}/machinery/{mid}/projects/new(pid=${provider.id}, mid=${machinery.id})}" method="post" class="panel__body">
+            <div class="formgrid">
+                <div class="fg-4" style="position: relative;">
+                    <label class="field__label">Nom de l'obra</label>
+                    <input type="text" id="projectNameInput" name="projectName" class="form-control" placeholder="Ex: St Narcís" autocomplete="off" required>
+                    <ul id="projectSuggestions" class="dropdown-menu" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; max-height: 200px; overflow-y: auto; z-index: 1000; margin-top: 4px; padding: 0;"></ul>
+                </div>
+                <div class="fg-3">
+                    <label class="field__label">Data d'inici</label>
+                    <input type="date" id="startDateInput" name="startDate" class="form-control" required>
+                </div>
+                <div class="fg-3">
+                    <label class="field__label">Data de fi (opcional)</label>
+                    <input type="date" id="endDateInput" name="endDate" class="form-control">
+                </div>
+                <div class="fg-2">
+                    <label class="field__label field__label--ghost" aria-hidden="true"></label>
+                    <button type="submit" class="btn btn--ink" style="width: 100%;">Afegeix</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="table-wrap">
+        <div class="table-scroll">
+            <table class="table-x">
+                <thead>
+                <tr>
+                    <th>Obra</th>
+                    <th>Data d'inici</th>
+                    <th>Data de fi</th>
+                    <th class="t-right">Accions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="assignment : ${assignments}" class="row-spine">
+                    <td class="cell-name" th:text="${assignment.project.name}"></td>
+                    <td th:text="${#temporals.format(assignment.startDate, 'dd/MM/yyyy')}"></td>
+                    <td>
+                        <span th:if="${assignment.endDate != null}" th:text="${#temporals.format(assignment.endDate, 'dd/MM/yyyy')}"></span>
+                        <span th:if="${assignment.endDate == null}" class="cell-sub" style="color: var(--ok); font-weight: 700;">En curs</span>
+                    </td>
+                    <td class="t-right">
+                        <a th:href="@{/provider/{pid}/machinery/{mid}/projects/{aid}/delete(pid=${provider.id}, mid=${machinery.id}, aid=${assignment.id})}" class="btn btn--quiet btn--sm" onclick="return confirm('Segur que vols esborrar aquest registre?');">Esborra</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(assignments)}">
+                    <td colspan="4">
+                        <div class="empty">
+                            <p class="empty__title">Cap obra assignada</p>
+                            <p class="empty__text">Aquesta màquina encara no té registre d'obres.</p>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const nameInput = document.getElementById('projectNameInput');
+        const startInput = document.getElementById('startDateInput');
+        const endInput = document.getElementById('endDateInput');
+        const suggestions = document.getElementById('projectSuggestions');
+
+        if (nameInput) {
+            nameInput.addEventListener('input', function() {
+                const query = this.value.trim();
+                if (query.length < 2) {
+                    suggestions.style.display = 'none';
+                    return;
+                }
+
+                fetch('/api/projects/autocomplete?q=' + encodeURIComponent(query))
+                    .then(response => response.json())
+                    .then(data => {
+                        suggestions.innerHTML = '';
+                        if (data.length > 0) {
+                            data.forEach(item => {
+                                const li = document.createElement('li');
+                                li.style.borderBottom = '1px solid var(--line)';
+                                li.innerHTML = `
+                                    <button type="button" class="dropdown-item" style="padding: 10px 16px; text-align: left; width: 100%; border: none; background: transparent; cursor: pointer;">
+                                        <span style="font-weight: 600; color: var(--ink); display: block;">${item.name}</span>
+                                        <span style="font-size: 11px; color: var(--ink-3);">Click per autocompletar dates</span>
+                                    </button>
+                                `;
+                                li.querySelector('button').addEventListener('click', function() {
+                                    nameInput.value = item.name;
+                                    if (item.startDate) startInput.value = item.startDate;
+                                    if (item.endDate) endInput.value = item.endDate;
+                                    suggestions.style.display = 'none';
+                                });
+                                suggestions.appendChild(li);
+                            });
+                            suggestions.style.display = 'block';
+                        } else {
+                            suggestions.style.display = 'none';
+                        }
+                    });
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!nameInput.contains(e.target) && !suggestions.contains(e.target)) {
+                    suggestions.style.display = 'none';
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

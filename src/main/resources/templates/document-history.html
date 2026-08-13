@@ -23,6 +23,7 @@
         </a>
         <nav class="appnav">
             <a th:href="@{/}" class="appnav__link">Proveïdors</a>
+            <a th:href="@{/projects}" class="appnav__link">Obres</a>
             <a th:href="@{/catalog}" class="appnav__link">Catàleg</a>
         </nav>
     </div>
@@ -50,7 +51,7 @@
             </div>
             <div th:if="${editVersion != null}">
                 <span class="eyebrow" style="color: var(--cobalt);">Correcció d'errors</span>
-                <div class="panel__title">Edita el registre vigent</div>
+                <div class="panel__title">Edita un registre anterior</div>
             </div>
             <a th:if="${editVersion != null}" th:href="@{/document/{id}/history(id=${document.id})}" class="btn btn--sm" style="border: 1px solid var(--danger); color: var(--danger); background-color: var(--danger-bg);">Cancel·la l'edició</a>
         </div>
@@ -60,7 +61,10 @@
 
                 <div class="fg-5">
                     <label class="field__label">Selecciona l'arxiu (opcional)</label>
-                    <input type="file" name="file" class="form-control" accept=".pdf,.png,.jpg,.jpeg">
+                    <input type="file" name="file" class="form-control" id="fileInput" accept=".pdf,.png,.jpg,.jpeg">
+                    <div id="fileDisplay" style="display: none; margin-top: 8px; font-size: 13.5px; font-weight: 600; color: var(--cobalt); align-items: center; gap: 6px;">
+                        📄 Arxiu preparat: <span id="fileNameSpan" style="color: var(--ink);"></span>
+                    </div>
                 </div>
 
                 <div class="fg-3" th:if="${document.documentType.expires}">
@@ -109,7 +113,7 @@
                     </td>
                     <td class="t-right">
                         <div style="display: flex; gap: 8px; justify-content: flex-end;">
-                            <a th:if="${stat.first}" th:href="@{/document/version/{vid}/edit(vid=${version.id})}" class="btn btn--line btn--sm">Edita</a>
+                            <a th:href="@{/document/version/{vid}/edit(vid=${version.id})}" class="btn btn--line btn--sm">Edita</a>
                             <a th:href="@{/document/version/{vid}/view(vid=${version.id})}" class="btn btn--line btn--sm" target="_blank">Obre</a>
                             <a th:href="@{/document/version/{vid}/download(vid=${version.id})}" class="btn btn--cobalt btn--sm">Descarrega</a>
                         </div>
@@ -133,6 +137,25 @@
         <span>Gestor documental intern</span>
     </div>
 </footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('fileInput');
+        const fileDisplay = document.getElementById('fileDisplay');
+        const fileNameSpan = document.getElementById('fileNameSpan');
+
+        if (fileInput && fileDisplay && fileNameSpan) {
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files.length > 0) {
+                    fileNameSpan.textContent = this.files[0].name;
+                    fileDisplay.style.display = 'flex';
+                } else {
+                    fileDisplay.style.display = 'none';
+                }
+            });
+        }
+    });
+</script>
 
 </body>
 </html>

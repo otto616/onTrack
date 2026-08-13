@@ -2,12 +2,7 @@ package com.otto616.onTrack.controllers;
 
 import com.otto616.onTrack.dto.ChecklistForm;
 import com.otto616.onTrack.models.*;
-import com.otto616.onTrack.repositories.ChecklistDocumentRepository;
-import com.otto616.onTrack.repositories.DocumentVersionRepository;
-import com.otto616.onTrack.repositories.ProviderRepository;
-import com.otto616.onTrack.repositories.DocumentTypeRepository;
-import com.otto616.onTrack.repositories.WorkerRepository;
-import com.otto616.onTrack.repositories.MachineryRepository;
+import com.otto616.onTrack.repositories.*;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -39,14 +34,18 @@ public class ProviderController {
     private final DocumentVersionRepository documentVersionRepository;
     private final WorkerRepository workerRepository;
     private final MachineryRepository machineryRepository;
+    private final ProjectRepository projectRepository;
+    private final ProjectAssignmentRepository projectAssignmentRepository;
 
-    public ProviderController(ProviderRepository providerRepository, ChecklistDocumentRepository checklistRepository, DocumentTypeRepository documentTypeRepository, DocumentVersionRepository documentVersionRepository, WorkerRepository workerRepository, MachineryRepository machineryRepository) {
+    public ProviderController(ProviderRepository providerRepository, ChecklistDocumentRepository checklistRepository, DocumentTypeRepository documentTypeRepository, DocumentVersionRepository documentVersionRepository, WorkerRepository workerRepository, MachineryRepository machineryRepository, ProjectRepository projectRepository, ProjectAssignmentRepository projectAssignmentRepository) {
         this.providerRepository = providerRepository;
         this.checklistRepository = checklistRepository;
         this.documentTypeRepository = documentTypeRepository;
         this.documentVersionRepository = documentVersionRepository;
         this.workerRepository = workerRepository;
         this.machineryRepository = machineryRepository;
+        this.projectRepository = projectRepository;
+        this.projectAssignmentRepository = projectAssignmentRepository;
     }
 
     public static class SearchResult {
@@ -64,7 +63,9 @@ public class ProviderController {
             return results;
         }
 
-        List<Provider> providers = providerRepository.findByNameContainingIgnoreCaseOrTaxIdContainingIgnoreCase(q, q);
+        List<Provider> providers = providerRepository.findByNameContainingIgnoreCaseOrTaxIdContainingIgnoreCase(q, q)
+                .stream().filter(Provider::isActive).toList();
+
         for (Provider p : providers) {
             SearchResult r = new SearchResult();
             r.type = "Proveïdor";
@@ -106,9 +107,10 @@ public class ProviderController {
 
         List<Provider> providers;
         if (search != null && !search.isEmpty()) {
-            providers = providerRepository.findByNameContainingIgnoreCaseOrTaxIdContainingIgnoreCase(search, search);
+            providers = providerRepository.findByNameContainingIgnoreCaseOrTaxIdContainingIgnoreCase(search, search)
+                    .stream().filter(Provider::isActive).toList();
         } else {
-            providers = providerRepository.findAll();
+            providers = providerRepository.findByIsActiveTrue();
         }
 
         Map<Long, Long> pendingMap = new HashMap<>();
@@ -151,6 +153,76 @@ public class ProviderController {
         }
 
         return "redirect:/";
+    }
+
+    @GetMapping("/provider/{id}/edit")
+    public String editProviderForm(@PathVariable Long id, Model model) {
+        model.addAttribute("provider", providerRepository.findById(id).orElseThrow());
+        model.addAttribute("providerTypes", Enums.ProviderType.values());
+        return "provider-form";
+    }
+
+    @PostMapping("/provider/{id}/edit")
+    public String updateProvider(@PathVariable Long id, @ModelAttribute Provider providerForm) {
+        Provider provider = providerRepository.findById(id).orElseThrow();
+        provider.setName(providerForm.getName());
+        provider.setTaxId(providerForm.getTaxId());
+        provider.setProviderType(providerForm.getProviderType());
+        providerRepository.save(provider);
+        return "redirect:/";
+    }
+
+    @GetMapping("/provider/{id}/delete")
+    public String deleteProvider(@PathVariable Long id) {
+        Provider provider = providerRepository.findById(id).orElseThrow();
+        provider.setActive(false);
+        providerRepository.save(provider);
+        return "redirect:/";
+    }
+
+    @GetMapping("/providers/trash")
+    public String viewTrash(Model model) {
+        model.addAttribute("providers", providerRepository.findByIsActiveFalse());
+        return "provider-trash";
+    }
+
+    @GetMapping("/provider/{id}/restore")
+    public String restoreProvider(@PathVariable Long id) {
+        Provider provider = providerRepository.findById(id).orElseThrow();
+        provider.setActive(true);
+        providerRepository.save(provider);
+        return "redirect:/providers/trash";
+    }
+
+    private void performHardDelete(Long providerId) {
+        List<ProjectAssignment> assignments = projectAssignmentRepository.findByProviderIdOrderByStartDateDesc(providerId);
+        projectAssignmentRepository.deleteAll(assignments);
+
+        List<ChecklistDocument> docs = checklistRepository.findByProviderId(providerId);
+        checklistRepository.deleteAll(docs);
+
+        List<Worker> workers = workerRepository.findByProviderId(providerId);
+        workerRepository.deleteAll(workers);
+
+        List<Machinery> machineries = machineryRepository.findByProviderId(providerId);
+        machineryRepository.deleteAll(machineries);
+
+        providerRepository.deleteById(providerId);
+    }
+
+    @GetMapping("/provider/{id}/hard-delete")
+    public String hardDeleteProvider(@PathVariable Long id) {
+        performHardDelete(id);
+        return "redirect:/providers/trash";
+    }
+
+    @GetMapping("/providers/trash/empty")
+    public String emptyTrash() {
+        List<Provider> trash = providerRepository.findByIsActiveFalse();
+        for (Provider p : trash) {
+            performHardDelete(p.getId());
+        }
+        return "redirect:/providers/trash";
     }
 
     @GetMapping("/provider/{id}/checklist")
@@ -219,6 +291,7 @@ public class ProviderController {
                               @RequestParam(value = "expirationDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate expirationDate,
                               @RequestParam(value = "received", defaultValue = "false") boolean received) throws IOException {
         ChecklistDocument doc = checklistRepository.findById(id).orElseThrow();
+        DocumentVersion version = new DocumentVersion();
 
         if (file != null && !file.isEmpty()) {
             String uploadDir = "uploads/";
@@ -228,21 +301,22 @@ public class ProviderController {
             Path path = Paths.get(uploadDir + storedFileName);
             Files.write(path, file.getBytes());
 
-            DocumentVersion version = new DocumentVersion();
-            version.setChecklistDocument(doc);
             version.setFileName(storedFileName);
             version.setOriginalFileName(file.getOriginalFilename());
-            version.setUploadDate(LocalDate.now());
-            version.setExpirationDate(expirationDate);
-
-            documentVersionRepository.save(version);
             doc.setFileName(storedFileName);
         }
 
-        doc.setReceived(received);
-        if (expirationDate != null) {
-            doc.setExpirationDate(expirationDate);
+        version.setChecklistDocument(doc);
+        version.setUploadDate(LocalDate.now());
+        version.setExpirationDate(expirationDate);
+        version = documentVersionRepository.save(version);
+
+        if (!doc.getVersions().contains(version)) {
+            doc.getVersions().add(version);
         }
+
+        doc.setReceived(received);
+        doc.updateExpirationDateFromVersions();
         checklistRepository.save(doc);
 
         return "redirect:/document/" + id + "/history";
@@ -311,11 +385,48 @@ public class ProviderController {
         documentVersionRepository.save(version);
 
         doc.setReceived(received);
-        if (expirationDate != null) {
-            doc.setExpirationDate(expirationDate);
-        }
+        doc.updateExpirationDateFromVersions();
         checklistRepository.save(doc);
 
         return "redirect:/document/" + doc.getId() + "/history";
+    }
+
+    @GetMapping("/provider/{id}/projects")
+    public String viewProviderProjects(@PathVariable Long id, Model model) {
+        Provider provider = providerRepository.findById(id).orElseThrow();
+        List<ProjectAssignment> assignments = projectAssignmentRepository.findByProviderIdOrderByStartDateDesc(id);
+
+        model.addAttribute("provider", provider);
+        model.addAttribute("assignments", assignments);
+        return "provider-projects";
+    }
+
+    @PostMapping("/provider/{id}/projects/new")
+    public String assignProviderProject(@PathVariable Long id,
+                                        @RequestParam("projectName") String projectName,
+                                        @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+                                        @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
+        Provider provider = providerRepository.findById(id).orElseThrow();
+
+        Project project = projectRepository.findByNameIgnoreCase(projectName).orElseGet(() -> {
+            Project p = new Project();
+            p.setName(projectName);
+            return projectRepository.save(p);
+        });
+
+        ProjectAssignment assignment = new ProjectAssignment();
+        assignment.setProvider(provider);
+        assignment.setProject(project);
+        assignment.setStartDate(startDate);
+        assignment.setEndDate(endDate);
+        projectAssignmentRepository.save(assignment);
+
+        return "redirect:/provider/" + id + "/projects";
+    }
+
+    @GetMapping("/provider/{providerId}/projects/{assignmentId}/delete")
+    public String deleteProviderProjectAssignment(@PathVariable Long providerId, @PathVariable Long assignmentId) {
+        projectAssignmentRepository.deleteById(assignmentId);
+        return "redirect:/provider/" + providerId + "/projects";
     }
 }

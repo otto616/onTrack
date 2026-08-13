@@ -235,6 +235,15 @@ a:hover { color: var(--cobalt-dk); text-decoration: underline; text-underline-of
 }
 .panel--gap { margin-bottom: 28px; }
 
+.panel--overflow {
+    overflow: visible;
+    position: relative;
+    z-index: 20;
+}
+.panel--overflow .panel__head {
+    border-radius: var(--r-lg) var(--r-lg) 0 0;
+}
+
 .panel__head {
     padding: 16px 22px;
     border-bottom: 1px solid var(--line);
