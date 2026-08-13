@@ -101,7 +101,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="version, stat : ${document.versions}" class="row-spine" th:style="${stat.first} ? 'background-color: var(--ok-bg);' : ''">
+                <tr th:each="version, stat : ${document.sortedVersions}" class="row-spine" th:style="${stat.first} ? 'background-color: var(--ok-bg);' : ''">
                     <td style="display: flex; align-items: center; border-bottom: none; height: 100%;">
                         <span th:text="${#temporals.format(version.uploadDate, 'dd/MM/yyyy')}"></span>
                         <span th:if="${stat.first}" class="pill pill--ok" style="margin-left: 12px; font-size: 10px; padding: 2px 8px;">VIGENT</span>
@@ -116,6 +116,7 @@
                             <a th:href="@{/document/version/{vid}/edit(vid=${version.id})}" class="btn btn--line btn--sm">Edita</a>
                             <a th:href="@{/document/version/{vid}/view(vid=${version.id})}" class="btn btn--line btn--sm" target="_blank">Obre</a>
                             <a th:href="@{/document/version/{vid}/download(vid=${version.id})}" class="btn btn--cobalt btn--sm">Descarrega</a>
+                            <a th:href="@{/document/version/{vid}/delete(vid=${version.id})}" class="btn btn--quiet btn--sm" style="color: var(--danger);" onclick="return confirm('Segur que vols esborrar aquesta versió de l\'historial?');">Esborra</a>
                         </div>
                     </td>
                 </tr>

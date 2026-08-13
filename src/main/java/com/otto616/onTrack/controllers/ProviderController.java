@@ -391,6 +391,24 @@ public class ProviderController {
         return "redirect:/document/" + doc.getId() + "/history";
     }
 
+    @GetMapping("/document/version/{versionId}/delete")
+    public String deleteVersion(@PathVariable Long versionId) {
+        DocumentVersion version = documentVersionRepository.findById(versionId).orElseThrow();
+        ChecklistDocument doc = version.getChecklistDocument();
+
+        doc.getVersions().remove(version);
+        documentVersionRepository.delete(version);
+
+        doc.updateExpirationDateFromVersions();
+        if (doc.getVersions().isEmpty()) {
+            doc.setReceived(false);
+            doc.setFileName(null);
+        }
+        checklistRepository.save(doc);
+
+        return "redirect:/document/" + doc.getId() + "/history";
+    }
+
     @GetMapping("/provider/{id}/projects")
     public String viewProviderProjects(@PathVariable Long id, Model model) {
         Provider provider = providerRepository.findById(id).orElseThrow();

@@ -34,7 +34,7 @@ public class ChecklistDocument {
 
     private boolean exempt = false;
 
-    @OneToMany(mappedBy = "checklistDocument", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "checklistDocument", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id DESC")
     private List<DocumentVersion> versions = new ArrayList<>();
 
@@ -70,8 +70,30 @@ public class ChecklistDocument {
     public List<DocumentVersion> getVersions() { return versions; }
     public void setVersions(List<DocumentVersion> versions) { this.versions = versions; }
 
+    public List<DocumentVersion> getSortedVersions() {
+        List<DocumentVersion> sorted = new ArrayList<>(this.versions);
+        sorted.sort((v1, v2) -> {
+            LocalDate d1 = v1.getExpirationDate();
+            LocalDate d2 = v2.getExpirationDate();
+
+            if (d1 == null && d2 == null) {
+                return v2.getId().compareTo(v1.getId());
+            }
+            if (d1 == null) return 1;
+            if (d2 == null) return -1;
+
+            int comp = d2.compareTo(d1);
+            if (comp == 0) {
+                return v2.getId().compareTo(v1.getId());
+            }
+            return comp;
+        });
+        return sorted;
+    }
+
     public void updateExpirationDateFromVersions() {
         if (this.versions == null || this.versions.isEmpty()) {
+            this.expirationDate = null;
             return;
         }
         LocalDate maxDate = null;
